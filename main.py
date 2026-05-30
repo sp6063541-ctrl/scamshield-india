@@ -52,7 +52,7 @@ def get_stock(symbol):
             "volume_spike": vol_spike,
             "risk_score": risk,
             "exchange": exchange,
-            "flagged": risk > 35,
+            "flagged": risk > 10,
             "timestamp": datetime.now().strftime("%H:%M IST")
         }
     except:
