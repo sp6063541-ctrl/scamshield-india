@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScamShield India</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#060a0f;
+--surface:#0c1219;
+--surface2:#111921;
+--surface3:#162030;
+--border:rgba(255,255,255,0.06);
+--border2:rgba(255,255,255,0.12);
+--accent:#3b82f6;
+--accent2:#1d4ed8;
+--red:#ef4444;
+--red2:#dc2626;
+--orange:#f97316;
+--green:#22c55e;
+--yellow:#eab308;
+--purple:#a855f7;
+--text:#f1f5f9;
+--text2:#94a3b8;
+--text3:#475569;
+--mono:'JetBrains Mono',monospace;
+--sans:'Inter',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;font-size:13px}
+
+/* Noise texture */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:0.4}
+
+/* Top nav */
+nav{height:52px;background:rgba(6,10,15,0.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:20px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.nav-logo{display:flex;align-items:center;gap:10px;margin-right:8px}
+.logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px;fill:white}
+.logo-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.logo-name span{color:var(--red)}
+.nav-divider{width:1px;height:20px;background:var(--border2)}
+.nav-badge{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:4px 10px;border-radius:4px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:glow 2s infinite}
+@keyframes glow{0%,100%{opacity:1;box-shadow:0 0 8px var(--green)}50%{opacity:0.7;box-shadow:0 0 4px var(--green)}}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.threat-pill{display:flex;align-items:center;gap:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);padding:4px 12px;border-radius:4px;font-family:var(--mono);font-size:10px}
+.threat-label{color:var(--red);font-weight:600;letter-spacing:0.05em}
+.threat-bars{display:flex;gap:2px;align-items:flex-end}
+.tb{width:3px;border-radius:1px}
+.nav-time{font-family:var(--mono);font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:4px}
+
+/* Alert ticker */
+.ticker{height:34px;background:rgba(239,68,68,0.05);border-bottom:1px solid rgba(239,68,68,0.15);display:flex;align-items:center;overflow:hidden}
+.ticker-badge{flex-shrink:0;background:var(--red);color:white;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.15em;padding:0 14px;height:100%;display:flex;align-items:center}
+.ticker-track{flex:1;overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 5%,black 95%,transparent)}
+.ticker-inner{display:flex;gap:48px;animation:ticker 40s linear infinite;white-space:nowrap;padding:0 24px}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.t-alert{font-family:var(--mono);font-size:10px;color:var(--text2);display:flex;align-items:center;gap:8px}
+.t-dot{width:5px;height:5px;border-radius:50%}
+.t-sym{color:var(--text);font-weight:600}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:240px 1fr 260px;height:calc(100vh - 86px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+.center{overflow-y:auto;display:flex;flex-direction:column}
+.rightbar{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto}
+
+/* Section headers */
+.sh{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02)}
+.sh-title{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase}
+.sh-badge{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px}
+
+/* Metric strip */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.metric{background:var(--surface);padding:12px 14px}
+.m-val{font-size:22px;font-weight:700;font-family:var(--mono);line-height:1;margin-bottom:3px}
+.m-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em}
+.m-change{font-size:9px;font-family:var(--mono);margin-top:3px}
+
+/* Stock list */
+.stock-list{flex:1}
+.stock-row{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;position:relative}
+.stock-row:hover{background:var(--surface2)}
+.stock-row.sel{background:var(--surface3);border-left:2px solid var(--accent)}
+.stock-row.crit{border-left:2px solid var(--red)}
+.stock-row.crit.sel{border-left:2px solid var(--red)}
+.sr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.sr-sym{font-size:12px;font-weight:600;color:var(--text);letter-spacing:0.02em}
+.sr-badge{font-family:var(--mono);font-size:8px;font-weight:700;padding:2px 5px;border-radius:2px;letter-spacing:0.08em}
+.bc{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.bh{background:rgba(249,115,22,0.12);color:var(--orange);border:1px solid rgba(249,115,22,0.25)}
+.bm{background:rgba(234,179,8,0.12);color:var(--yellow);border:1px solid rgba(234,179,8,0.25)}
+.sr-detail{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px}
+.sr-tags{display:flex;gap:3px;flex-wrap:wrap}
+.tag{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:2px;background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
+
+/* Center top */
+.c-header{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:flex-start;justify-content:space-between}
+.c-stock-name{font-size:26px;font-weight:700;letter-spacing:-0.5px;line-height:1}
+.c-meta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px}
+.c-risk{display:flex;align-items:center;gap:6px;margin-top:8px}
+.risk-score{font-family:var(--mono);font-size:11px;font-weight:600}
+.risk-bar-wrap{flex:1;max-width:120px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.risk-bar-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--red));border-radius:2px}
+.c-actions{display:flex;gap:8px}
+.btn{font-size:11px;font-weight:600;padding:7px 14px;border-radius:5px;cursor:pointer;border:none;font-family:var(--sans);transition:all 0.15s;letter-spacing:0.01em}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+.btn-ghost:hover{background:rgba(239,68,68,0.08)}
+
+/* Chart */
+.chart-wrap{padding:16px 20px;border-bottom:1px solid var(--border)}
+.chart-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chart-title-text{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase}
+.chart-legend{display:flex;gap:14px}
+.cl-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--text3)}
+.cl-dot{width:8px;height:2px;border-radius:1px}
+.chart-container{position:relative;height:180px;background:var(--surface2);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.chart-grid{position:absolute;inset:0}
+.pump-zone{position:absolute;top:0;bottom:0;background:rgba(239,68,68,0.05);border-left:1px dashed rgba(239,68,68,0.3);border-right:1px dashed rgba(239,68,68,0.3)}
+.pump-label{position:absolute;top:8px;font-family:var(--mono);font-size:8px;color:var(--red);white-space:nowrap;padding:2px 6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:3px}
+.chart-svg{width:100%;height:100%}
+.chart-x-labels{display:flex;justify-content:space-between;padding:4px 8px 0;font-family:var(--mono);font-size:8px;color:var(--text3)}
+
+/* Evidence */
+.ev-list{padding:0 20px}
+.ev-title{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.ev-item{display:flex;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.ev-item:last-child{border-bottom:none}
+.ev-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.ev-body{flex:1}
+.ev-header{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.ev-platform{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;padding:2px 6px;border-radius:3px}
+.ep-yt{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
+.ep-tg{background:rgba(59,130,246,0.1);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
+.ep-tv{background:rgba(168,85,247,0.1);color:#c084fc;border:1px solid rgba(168,85,247,0.2)}
+.ep-tw{background:rgba(14,165,233,0.1);color:#38bdf8;border:1px solid rgba(14,165,233,0.2)}
+.ev-handle{font-size:11px;font-weight:500;color:var(--text)}
+.ev-time{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto}
+.ev-text{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:4px}
+.ev-stats{display:flex;gap:12px}
+.ev-stat{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.ev-stat span{color:var(--text2)}
+.ev-corr{font-family:var(--mono);font-size:9px;font-weight:600}
+
+/* Right panel */
+.rp-section{border-bottom:1px solid var(--border)}
+.profile-wrap{padding:14px}
+.profile-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.05));border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--red)}
+.profile-name-text{font-size:13px;font-weight:600;color:var(--text)}
+.profile-handle-text{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:1px}
+.profile-wanted{display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);padding:2px 8px;border-radius:3px;font-family:var(--mono);font-size:8px;font-weight:700;color:var(--red);letter-spacing:0.1em;margin-top:4px}
+.p-stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.p-stat-row:last-child{border-bottom:none}
+.psr-label{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.psr-val{font-family:var(--mono);font-size:10px;font-weight:600}
+
+/* Violations */
+.violations-wrap{padding:10px 14px}
+.viol-item{padding:8px 10px;border-radius:5px;background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.1);margin-bottom:6px}
+.v-code{font-family:var(--mono);font-size:8px;color:var(--red);margin-bottom:2px;letter-spacing:0.05em}
+.v-text{font-size:10px;color:var(--text2);line-height:1.4}
+
+/* Complaint portal */
+.complaint-wrap{padding:14px}
+.complaint-count-big{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);line-height:1;margin-bottom:4px}
+.complaint-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:12px}
+.progress-bar{height:4px;background:var(--surface3);border-radius:2px;margin-bottom:4px;overflow:hidden}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--red2),var(--red));border-radius:2px}
+.progress-label{font-family:var(--mono);font-size:9px;color:var(--text3);display:flex;justify-content:space-between}
+.file-btn{width:100%;margin-top:12px;padding:9px;background:var(--red);color:white;font-size:11px;font-weight:700;border:none;border-radius:5px;cursor:pointer;letter-spacing:0.02em;transition:background 0.15s}
+.file-btn:hover{background:var(--red2)}
+
+/* Network map placeholder */
+.network-map{padding:14px}
+.net-title{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
+.net-visual{height:120px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.net-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:8px}
+.net-line{position:absolute;background:rgba(59,130,246,0.2);height:1px;transform-origin:left center}
+.net-center{width:36px;height:36px;background:rgba(239,68,68,0.15);border:2px solid var(--red);color:var(--red);font-size:9px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
+.net-node-sm{width:22px;height:22px;background:rgba(59,130,246,0.1);border:1px solid var(--accent);color:var(--accent);font-size:7px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">Scam<span>Shield</span> India</div>
+    </div>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-badge"><div class="live-dot"></div>NSE LIVE</div>
+  <div class="nav-badge"><div class="live-dot"></div>BSE LIVE</div>
+  <div class="nav-badge"><div class="live-dot"></div>SOCIAL SCAN</div>
+  <div class="nav-right">
+    <div class="threat-pill">
+      <div class="threat-label">THREAT</div>
+      <div class="threat-bars">
+        <div class="tb" style="height:6px;background:var(--green)"></div>
+        <div class="tb" style="height:9px;background:var(--yellow)"></div>
+        <div class="tb" style="height:12px;background:var(--orange)"></div>
+        <div class="tb" style="height:15px;background:var(--red);box-shadow:0 0 6px var(--red)"></div>
+      </div>
+      <span style="color:var(--red);font-size:10px;font-weight:700">CRITICAL</span>
+    </div>
+    <div class="nav-time" id="clock">--:--:-- IST</div>
+  </div>
+</nav>
+
+<div class="ticker">
+  <div class="ticker-badge">LIVE ALERTS</div>
+  <div class="ticker-track">
+    <div class="ticker-inner">
+      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">ZZZZ LTD</span> Volume +847% · Telegram network active · 3 bulk buyers flagged · RISK 98</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">PENNY CORP</span> StockGuru_Rahul promoted D-3 · Dump phase detected · 280% gain → -65% crash</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--orange)"></div><span class="t-sym">MICROTECH IND</span> Promoter pledging +67% · Unusual call options · RISK 74</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">ALPHA VENTURES</span> 14 Telegram channels coordinated · UPI trail confirmed · 847 victim reports</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--yellow)"></div><span class="t-sym">NEXGEN PHARMA</span> TV guest mentioned 3x in 7 days · Price correlation 94% · Monitoring</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">ZZZZ LTD</span> Volume +847% · Telegram network active · 3 bulk buyers flagged · RISK 98</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">PENNY CORP</span> StockGuru_Rahul promoted D-3 · Dump phase detected · 280% gain → -65% crash</div>
+      <div class="t-alert"><div class="t-dot" style="background:var(--orange)"></div><span class="t-sym">MICROTECH IND</span> Promoter pledging +67% · Unusual call options · RISK 74</div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- LEFT SIDEBAR -->
+<div class="sidebar">
+  <div class="metrics">
+    <div class="metric"><div class="m-val" style="color:var(--red)" id="flagcount">23</div><div class="m-label">Flagged Today</div><div class="m-change" style="color:var(--red)">↑ 4 last hour</div></div>
+    <div class="metric"><div class="m-val" style="color:var(--orange)">847</div><div class="m-label">Complaints</div><div class="m-change" style="color:var(--green)">+12 today</div></div>
+    <div class="metric"><div class="m-val" style="color:var(--green)">142</div><div class="m-label">Operators ID'd</div><div class="m-change" style="color:var(--text3)">All time</div></div>
+    <div class="metric"><div class="m-val" style="color:var(--accent);font-size:16px">₹2.3Cr</div><div class="m-label">Victim Loss</div><div class="m-change" style="color:var(--text3)">Logged</div></div>
+  </div>
+
+  <div class="sh"><span class="sh-title">Flagged Stocks</span><span class="sh-badge bc">23 ACTIVE</span></div>
+
+  <div class="stock-list">
+    <div class="stock-row crit sel" onclick="sel(this,'ZZZZ LTD','NSE SME · ₹847 +340% · Risk 98/100','98')">
+      <div class="sr-top"><span class="sr-sym">ZZZZ LTD</span><span class="sr-badge bc">CRITICAL</span></div>
+      <div class="sr-detail">Vol +847% · ₹847 (+340%) · NSE SME</div>
+      <div class="sr-tags"><span class="tag">PUMP</span><span class="tag">INFLUENCER</span><span class="tag">BULK</span></div>
+    </div>
+    <div class="stock-row crit" onclick="sel(this,'PENNY CORP','NSE · ₹12.40 +280% · Risk 95/100','95')">
+      <div class="sr-top"><span class="sr-sym">PENNY CORP</span><span class="sr-badge bc">CRITICAL</span></div>
+      <div class="sr-detail">Vol +620% · ₹12.40 (+280%) · DUMP ACTIVE</div>
+      <div class="sr-tags"><span class="tag">DUMPING</span><span class="tag">TELEGRAM</span></div>
+    </div>
+    <div class="stock-row" onclick="sel(this,'ALPHA VENTURES','NSE · ₹56.30 +190% · Risk 91/100','91')">
+      <div class="sr-top"><span class="sr-sym">ALPHA VENTURES</span><span class="sr-badge bc">CRITICAL</span></div>
+      <div class="sr-detail">14 Telegram ch · ₹56.30 (+190%) · UPI TRACED</div>
+      <div class="sr-tags"><span class="tag">COORDINATED</span><span class="tag">UPI</span></div>
+    </div>
+    <div class="stock-row" onclick="sel(this,'MICROTECH IND','BSE · ₹234 +45% · Risk 74/100','74')">
+      <div class="sr-top"><span class="sr-sym">MICROTECH IND</span><span class="sr-badge bh">HIGH</span></div>
+      <div class="sr-detail">Pledging +67% · ₹234 (+45%) · BSE</div>
+      <div class="sr-tags"><span class="tag">PLEDGING</span><span class="tag">OPTIONS</span></div>
+    </div>
+    <div class="stock-row" onclick="sel(this,'NEXGEN PHARMA','BSE · ₹892 +23% · Risk 61/100','61')">
+      <div class="sr-top"><span class="sr-sym">NEXGEN PHARMA</span><span class="sr-badge bm">MEDIUM</span></div>
+      <div class="sr-detail">TV mentions: 3x · ₹892 (+23%) · BSE</div>
+      <div class="sr-tags"><span class="tag">TV GUEST</span><span class="tag">MONITORING</span></div>
+    </div>
+    <div class="stock-row" onclick="sel(this,'SUNRISE STEEL','NSE · ₹34.20 +120% · Risk 79/100','79')">
+      <div class="sr-top"><span class="sr-sym">SUNRISE STEEL</span><span class="sr-badge bh">HIGH</span></div>
+      <div class="sr-detail">Vol +340% · ₹34.20 (+120%) · NSE</div>
+      <div class="sr-tags"><span class="tag">PUMP</span><span class="tag">YOUTUBE</span></div>
+    </div>
+    <div class="stock-row" onclick="sel(this,'GLOBAL INFRA','BSE · ₹8.90 +89% · Risk 82/100','82')">
+      <div class="sr-top"><span class="sr-sym">GLOBAL INFRA</span><span class="sr-badge bh">HIGH</span></div>
+      <div class="sr-detail">Vol +480% · ₹8.90 (+89%) · PENNY</div>
+      <div class="sr-tags"><span class="tag">PENNY</span><span class="tag">WHATSAPP</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CENTER -->
+<div class="center">
+  <div class="c-header">
+    <div>
+      <div class="c-stock-name" id="c-name">ZZZZ LTD</div>
+      <div class="c-meta" id="c-meta">NSE SME · ₹847 +340% · Risk 98/100 · Flagged 09:23 IST · Operator identified</div>
+      <div class="c-risk">
+        <span class="risk-score" style="color:var(--red)" id="c-risk">Risk 98/100</span>
+        <div class="risk-bar-wrap"><div class="risk-bar-fill" id="risk-fill" style="width:98%"></div></div>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--text3)">CRITICAL</span>
+      </div>
+    </div>
+    <div class="c-actions">
+      <button class="btn btn-ghost">⚠ File to SEBI</button>
+      <button class="btn btn-primary">Export Dossier</button>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label-row">
+      <span class="chart-title-text">Price & Volume Anomaly · 30 Day Window</span>
+      <div class="chart-legend">
+        <div class="cl-item"><div class="cl-dot" style="background:var(--accent)"></div>Price</div>
+        <div class="cl-item"><div class="cl-dot" style="background:var(--red)"></div>Volume anomaly</div>
+        <div class="cl-item"><div class="cl-dot" style="background:rgba(239,68,68,0.3);width:12px;height:8px;border-radius:1px"></div>Pump zone</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <div class="pump-zone" style="left:57%;width:18%">
+        <div class="pump-label" style="left:4px">▲ INFLUENCER POST</div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 800 180" preserveAspectRatio="none">
+        <!-- Grid lines -->
+        <line x1="0" y1="45" x2="800" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="90" x2="800" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="0" y1="135" x2="800" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <!-- Volume bars normal -->
+        <rect x="2" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="26" y="152" width="20" height="28" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="50" y="157" width="20" height="23" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="74" y="153" width="20" height="27" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="98" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="122" y="150" width="20" height="30" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="146" y="156" width="20" height="24" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="170" y="153" width="20" height="27" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="194" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="218" y="152" width="20" height="28" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="242" y="156" width="20" height="24" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="266" y="154" width="20" height="26" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="290" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="314" y="151" width="20" height="29" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="338" y="154" width="20" height="26" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="362" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="386" y="153" width="20" height="27" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <rect x="410" y="156" width="20" height="24" fill="rgba(59,130,246,0.25)" rx="1"/>
+        <!-- Volume bars pump -->
+        <rect x="434" y="130" width="20" height="50" fill="rgba(239,68,68,0.35)" rx="1"/>
+        <rect x="458" y="95" width="20" height="85" fill="rgba(239,68,68,0.5)" rx="1"/>
+        <rect x="482" y="50" width="20" height="130" fill="rgba(239,68,68,0.7)" rx="1"/>
+        <rect x="506" y="25" width="20" height="155" fill="rgba(239,68,68,0.85)" rx="1"/>
+        <rect x="530" y="40" width="20" height="140" fill="rgba(239,68,68,0.7)" rx="1"/>
+        <rect x="554" y="70" width="20" height="110" fill="rgba(239,68,68,0.5)" rx="1"/>
+        <!-- Volume dump -->
+        <rect x="578" y="110" width="20" height="70" fill="rgba(249,115,22,0.4)" rx="1"/>
+        <rect x="602" y="130" width="20" height="50" fill="rgba(249,115,22,0.3)" rx="1"/>
+        <rect x="626" y="145" width="20" height="35" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <rect x="650" y="150" width="20" height="30" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <rect x="674" y="152" width="20" height="28" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <rect x="698" y="153" width="20" height="27" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <rect x="722" y="155" width="20" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <rect x="746" y="153" width="20" height="27" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <rect x="770" y="155" width="20" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
+        <!-- Price area fill -->
+        <defs>
+          <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(59,130,246,0.15)"/>
+            <stop offset="100%" stop-color="rgba(59,130,246,0)"/>
+          </linearGradient>
+        </defs>
+        <path d="M12,130 L36,128 L60,132 L84,129 L108,131 L132,127 L156,130 L180,128 L204,131 L228,127 L252,130 L276,128 L300,129 L324,131 L348,128 L372,130 L396,129 L420,130 L444,110 L468,75 L492,35 L516,12 L540,28 L564,55 L588,82 L612,105 L636,118 L660,125 L684,129 L708,131 L732,130 L756,131 L780,130 L780,180 L12,180 Z" fill="url(#pg)"/>
+        <path d="M12,130 L36,128 L60,132 L84,129 L108,131 L132,127 L156,130 L180,128 L204,131 L228,127 L252,130 L276,128 L300,129 L324,131 L348,128 L372,130 L396,129 L420,130 L444,110 L468,75 L492,35 L516,12 L540,28 L564,55 L588,82 L612,105 L636,118 L660,125 L684,129 L708,131 L732,130 L756,131 L780,130" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <!-- Peak marker -->
+        <circle cx="516" cy="12" r="4" fill="var(--red)" stroke="rgba(239,68,68,0.4)" stroke-width="6"/>
+        <text x="520" y="10" fill="var(--red)" font-family="'JetBrains Mono'" font-size="8">PEAK +340%</text>
+      </svg>
+    </div>
+    <div class="chart-x-labels">
+      <span>Day 1</span><span>Day 7</span><span>Day 14</span><span style="color:var(--red)">Day 18 ▲</span><span>Day 22</span><span>Today</span>
+    </div>
+  </div>
+
+  <!-- Evidence timeline -->
+  <div class="ev-list">
+    <div class="ev-title">PROMOTION NETWORK — EVIDENCE TIMELINE</div>
+
+    <div class="ev-item">
+      <div class="ev-icon" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15)">▶</div>
+      <div class="ev-body">
+        <div class="ev-header">
+          <span class="ev-platform ep-yt">YOUTUBE</span>
+          <span class="ev-handle">StockGuru_Rahul</span>
+          <span class="ev-time">Day 16 · D-3 before peak</span>
+        </div>
+        <div class="ev-text">"ZZZZ LTD — hidden multibagger! Fundamentals insane. Buy before institutions enter." 2.1L subs · 47K views · Evidence archived.</div>
+        <div class="ev-stats">
+          <span class="ev-stat">Views <span>47,000</span></span>
+          <span class="ev-stat">Subscribers <span>2.1L</span></span>
+          <span class="ev-corr" style="color:var(--red)">Pump correlation: 96%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev-item">
+      <div class="ev-icon" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15)">✈</div>
+      <div class="ev-body">
+        <div class="ev-header">
+          <span class="ev-platform ep-tg">TELEGRAM</span>
+          <span class="ev-handle">StockTips_VIP · 84,000 members</span>
+          <span class="ev-time">Day 17 · D-2 before peak</span>
+        </div>
+        <div class="ev-text">Paid promotion: "ZZZZ LTD · Target ₹2000 · Operator entry confirmed · Accumulate below ₹600" · UPI payment trail to same operator confirmed across 3 channels.</div>
+        <div class="ev-stats">
+          <span class="ev-stat">Channels <span>3 linked</span></span>
+          <span class="ev-stat">Members <span>1.8L total</span></span>
+          <span class="ev-corr" style="color:var(--red)">UPI: CONFIRMED ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev-item">
+      <div class="ev-icon" style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15)">📺</div>
+      <div class="ev-body">
+        <div class="ev-header">
+          <span class="ev-platform ep-tv">TV CHANNEL</span>
+          <span class="ev-handle">Regional Business Channel · Prime Time</span>
+          <span class="ev-time">Day 17 · Evening</span>
+        </div>
+        <div class="ev-text">Guest analyst recommended ZZZZ LTD as "hidden gem with strong fundamentals." Same guest recommended 4 other flagged stocks in past 60 days. Pattern: 4/4 pumped within 72hrs.</div>
+        <div class="ev-stats">
+          <span class="ev-stat">Prior calls <span>4/4 pumped</span></span>
+          <span class="ev-corr" style="color:var(--orange)">Coincidence probability: 0.3%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ev-item">
+      <div class="ev-icon" style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.15)">𝕏</div>
+      <div class="ev-body">
+        <div class="ev-header">
+          <span class="ev-platform ep-tw">TWITTER/X</span>
+          <span class="ev-handle">8 coordinated accounts</span>
+          <span class="ev-time">Day 18 · Morning of peak</span>
+        </div>
+        <div class="ev-text">8 accounts tweeted within 20-min window. All created within same 30-day period. IP cluster identified. Bot pattern confirmed. Reported to X Trust & Safety.</div>
+        <div class="ev-stats">
+          <span class="ev-stat">Accounts <span>8 coordinated</span></span>
+          <span class="ev-stat">Window <span>20 minutes</span></span>
+          <span class="ev-corr" style="color:var(--red)">BOT NETWORK ✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="rightbar">
+
+  <!-- Operator profile -->
+  <div class="rp-section">
+    <div class="sh"><span class="sh-title">Operator Profile</span><span class="sh-badge bc">⚠ FLAGGED</span></div>
+    <div class="profile-wrap">
+      <div class="profile-top">
+        <div class="avatar">SK</div>
+        <div>
+          <div class="profile-name-text">Suresh K.</div>
+          <div class="profile-handle-text">@StockGuru_Rahul · Mumbai</div>
+          <div class="profile-wanted">● UNDER INVESTIGATION</div>
+        </div>
+      </div>
+      <div class="p-stat-row"><span class="psr-label">Stocks promoted</span><span class="psr-val" style="color:var(--red)">23</span></div>
+      <div class="p-stat-row"><span class="psr-label">Pumps confirmed</span><span class="psr-val" style="color:var(--red)">19 / 23</span></div>
+      <div class="p-stat-row"><span class="psr-label">Victim reports</span><span class="psr-val" style="color:var(--orange)">847</span></div>
+      <div class="p-stat-row"><span class="psr-label">Est. victim loss</span><span class="psr-val" style="color:var(--red)">₹2.3 Cr</span></div>
+      <div class="p-stat-row"><span class="psr-label">UPI ID traced</span><span class="psr-val" style="color:var(--green)">✓ Confirmed</span></div>
+      <div class="p-stat-row"><span class="psr-label">SEBI complaints</span><span class="psr-val" style="color:var(--orange)">14 filed</span></div>
+      <div class="p-stat-row"><span class="psr-label">Active since</span><span class="psr-val">Jan 2022</span></div>
+    </div>
+  </div>
+
+  <!-- Network map -->
+  <div class="rp-section">
+    <div class="sh"><span class="sh-title">Operator Network</span><span class="sh-badge bh">7 NODES</span></div>
+    <div class="network-map">
+      <div class="net-visual">
+        <!-- Center node -->
+        <div class="net-node net-center" style="left:calc(50% - 18px);top:calc(50% - 18px)">OP</div>
+        <!-- Connected nodes -->
+        <div class="net-node net-node-sm" style="left:20%;top:15%">YT</div>
+        <div class="net-node net-node-sm" style="left:65%;top:12%">TG1</div>
+        <div class="net-node net-node-sm" style="left:78%;top:45%">TG2</div>
+        <div class="net-node net-node-sm" style="left:68%;top:75%">TG3</div>
+        <div class="net-node net-node-sm" style="left:18%;top:72%">TV</div>
+        <div class="net-node net-node-sm" style="left:8%;top:42%">𝕏</div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 260 120">
+          <line x1="130" y1="60" x2="55" y2="22" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+          <line x1="130" y1="60" x2="175" y2="18" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+          <line x1="130" y1="60" x2="208" y2="56" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+          <line x1="130" y1="60" x2="182" y2="92" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+          <line x1="130" y1="60" x2="52" y2="90" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+          <line x1="130" y1="60" x2="28" y2="54" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Violations -->
+  <div class="rp-section">
+    <div class="sh"><span class="sh-title">SEBI Violations</span><span class="sh-badge bc">6 FOUND</span></div>
+    <div class="violations-wrap">
+      <div class="viol-item"><div class="v-code">SEBI (IA) REG 2013 · SEC 3(1)</div><div class="v-text">Unregistered investment advice to public</div></div>
+      <div class="viol-item"><div class="v-code">SEBI PFUTP 2003 · REG 4(2)(a)</div><div class="v-text">Market manipulation via misleading statements</div></div>
+      <div class="viol-item"><div class="v-code">SEBI (IA) REG · SEC 15(1)</div><div class="v-text">Paid promotion without mandatory disclosure</div></div>
+      <div class="viol-item"><div class="v-code">PMLA 2002 · SEC 3</div><div class="v-text">Proceeds of fraud via UPI money trail</div></div>
+    </div>
+  </div>
+
+  <!-- Complaint -->
+  <div class="rp-section">
+    <div class="sh"><span class="sh-title">Victim Reports</span></div>
+    <div class="complaint-wrap">
+      <div class="complaint-count-big">847</div>
+      <div class="complaint-sub">Registered victims · This operator</div>
+      <div class="progress-bar"><div class="pb-fill" style="width:85%"></div></div>
+      <div class="progress-label"><span>SEBI dossier</span><span style="color:var(--green)">85% complete</span></div>
+      <button class="file-btn">+ Register Your Complaint</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// Clock IST
+function tick(){
+  const d=new Date();
+  const ist=new Date(d.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const p=n=>String(n).padStart(2,'0');
+  document.getElementById('clock').textContent=`${p(ist.getHours())}:${p(ist.getMinutes())}:${p(ist.getSeconds())} IST`;
+}
+setInterval(tick,1000);tick();
+
+// Stock selection
+function sel(el,name,meta,risk){
+  document.querySelectorAll('.stock-row').forEach(r=>{r.classList.remove('sel')});
+  el.classList.add('sel');
+  document.getElementById('c-name').textContent=name;
+  document.getElementById('c-meta').textContent=meta+' · Flagged today · Operator identified';
+  document.getElementById('c-risk').textContent='Risk '+risk+'/100';
+  document.getElementById('risk-fill').style.width=risk+'%';
+  document.getElementById('risk-fill').style.background=risk>85?'linear-gradient(90deg,#dc2626,#ef4444)':risk>70?'linear-gradient(90deg,#ea580c,#f97316)':'linear-gradient(90deg,#ca8a04,#eab308)';
+}
+
+// Live flag counter
+let fc=23;
+setInterval(()=>{if(Math.random()>.96){fc++;document.getElementById('flagcount').textContent=fc;}},4000);
+</script>
+</body>
+</html>
