@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import requests
-import json
 from datetime import datetime
-import random
 
 app = FastAPI()
 
@@ -14,38 +12,47 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Stocks we monitor
 WATCHLIST = [
-    "ZOMATO", "PAYTM", "NYKAA", "DELHIVERY", "CARTRADE",
-    "POLICYBZR", "STAR HEALTH", "NAZARA", "EASEMYTRIP", "IXIGO"
+    "SEPC", "TARMAT", "RPOWER", "SUZLON", "YESBANK",
+    "IDEA", "JPASSOCIAT", "PCJEWELLER", "SINTEX",
+    "EDUCOMP", "UNITECH", "RCOM", "GTLINFRA", "HDIL"
 ]
 
-def get_stock_data(symbol):
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+def get_stock(symbol):
     try:
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}.NS"
-        headers = {"User-Agent": "Mozilla/5.0"}
-        r = requests.get(url, headers=headers, timeout=5)
-        data = r.json()
-        price = data["chart"]["result"][0]["meta"]["regularMarketPrice"]
-        prev  = data["chart"]["result"][0]["meta"]["previousClose"]
-        vol   = data["chart"]["result"][0]["meta"]["regularMarketVolume"]
-        avg_vol = data["chart"]["result"][0]["meta"].get("averageDailyVolume10Day", vol)
-        change_pct = round(((price - prev) / prev) * 100, 2)
-        vol_spike  = round((vol / avg_vol) * 100) if avg_vol else 100
+        r = requests.get(url, headers=HEADERS, timeout=8)
+        d = r.json()
+        meta = d["chart"]["result"][0]["meta"]
+        price = meta.get("regularMarketPrice", 0)
+        prev = meta.get("previousClose", price)
+        vol = meta.get("regularMarketVolume", 0)
+        avg_vol = meta.get("averageDailyVolume10Day", vol) or vol
+        change_pct = round(((price - prev) / prev) * 100, 2) if prev else 0
+        vol_spike = round((vol / avg_vol) * 100) if avg_vol else 100
         risk = 0
-        if abs(change_pct) > 10: risk += 40
-        elif abs(change_pct) > 5: risk += 20
-        if vol_spike > 300: risk += 40
-        elif vol_spike > 150: risk += 20
-        if change_pct > 15: risk += 20
+        if abs(change_pct) > 15: risk += 45
+        elif abs(change_pct) > 8: risk += 25
+        elif abs(change_pct) > 4: risk += 10
+        if vol_spike > 400: risk += 45
+        elif vol_spike > 200: risk += 25
+        elif vol_spike > 130: risk += 10
         risk = min(risk, 99)
+        exchange = "BSE" if symbol in ["SEPC","TARMAT","PCJEWELLER","SINTEX","EDUCOMP","UNITECH","GTLINFRA","HDIL"] else "NSE"
         return {
             "symbol": symbol,
             "price": round(price, 2),
             "change_pct": change_pct,
             "volume_spike": vol_spike,
             "risk_score": risk,
-            "flagged": risk > 40,
+            "exchange": exchange,
+            "flagged": risk > 35,
             "timestamp": datetime.now().strftime("%H:%M IST")
         }
     except:
@@ -53,22 +60,26 @@ def get_stock_data(symbol):
 
 @app.get("/")
 def root():
-    return {"status": "ScamShield India API Running"}
+    return {"status": "ScamShield India API Running", "time": datetime.now().strftime("%H:%M IST")}
 
 @app.get("/api/flagged")
 def get_flagged():
     results = []
     for symbol in WATCHLIST:
-        data = get_stock_data(symbol)
+        data = get_stock(symbol)
         if data and data["flagged"]:
             results.append(data)
     results.sort(key=lambda x: x["risk_score"], reverse=True)
-    return {"flagged": results, "total": len(results), "scanned": len(WATCHLIST)}
+    return {
+        "flagged": results,
+        "total": len(results),
+        "scanned": len(WATCHLIST),
+        "timestamp": datetime.now().strftime("%H:%M IST")
+    }
 
 @app.get("/api/stats")
 def get_stats():
     return {
-        "flagged_today": random.randint(18, 28),
         "complaints": 847,
         "operators_identified": 142,
         "victim_loss_cr": 2.3
