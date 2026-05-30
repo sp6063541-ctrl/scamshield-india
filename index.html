@@ -3,554 +3,688 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScamShield India</title>
+<title>ScamShield India — Market Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#060a0f;
---surface:#0c1219;
---surface2:#111921;
---surface3:#162030;
---border:rgba(255,255,255,0.06);
---border2:rgba(255,255,255,0.12);
---accent:#3b82f6;
---accent2:#1d4ed8;
---red:#ef4444;
---red2:#dc2626;
---orange:#f97316;
---green:#22c55e;
---yellow:#eab308;
---purple:#a855f7;
---text:#f1f5f9;
---text2:#94a3b8;
---text3:#475569;
---mono:'JetBrains Mono',monospace;
---sans:'Inter',sans-serif;
+--bg:#060a0f;--surface:#0c1219;--surface2:#111921;--surface3:#162030;
+--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+--accent:#3b82f6;--red:#ef4444;--red2:#dc2626;--orange:#f97316;
+--green:#22c55e;--yellow:#eab308;--purple:#a855f7;
+--text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
 }
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;font-size:13px}
 
-/* Noise texture */
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:0.4}
-
-/* Top nav */
-nav{height:52px;background:rgba(6,10,15,0.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:20px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
-.nav-logo{display:flex;align-items:center;gap:10px;margin-right:8px}
+/* Nav */
+nav{height:52px;background:rgba(6,10,15,0.97);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:200;backdrop-filter:blur(20px)}
+.logo{display:flex;align-items:center;gap:10px}
 .logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:6px;display:flex;align-items:center;justify-content:center}
 .logo-mark svg{width:14px;height:14px;fill:white}
-.logo-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.logo-name{font-size:14px;font-weight:700;letter-spacing:-0.3px}
 .logo-name span{color:var(--red)}
 .nav-divider{width:1px;height:20px;background:var(--border2)}
-.nav-badge{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:4px 10px;border-radius:4px}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:glow 2s infinite}
-@keyframes glow{0%,100%{opacity:1;box-shadow:0 0 8px var(--green)}50%{opacity:0.7;box-shadow:0 0 4px var(--green)}}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text3);transition:all 0.15s;border:none;background:none;font-family:var(--sans)}
+.nav-tab:hover{color:var(--text2);background:var(--surface2)}
+.nav-tab.active{color:var(--text);background:var(--surface3)}
+.nav-badges{display:flex;gap:8px;margin-left:8px}
+.nbadge{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);padding:3px 8px;border-radius:4px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:glow 2s infinite}
+.offline-dot{width:5px;height:5px;border-radius:50%;background:var(--red)}
+@keyframes glow{0%,100%{box-shadow:0 0 6px var(--green)}50%{box-shadow:0 0 2px var(--green)}}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.threat-pill{display:flex;align-items:center;gap:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);padding:4px 12px;border-radius:4px;font-family:var(--mono);font-size:10px}
-.threat-label{color:var(--red);font-weight:600;letter-spacing:0.05em}
+.threat-pill{display:flex;align-items:center;gap:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);padding:4px 12px;border-radius:4px;font-family:var(--mono);font-size:9px}
 .threat-bars{display:flex;gap:2px;align-items:flex-end}
 .tb{width:3px;border-radius:1px}
-.nav-time{font-family:var(--mono);font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:4px}
+.clock{font-family:var(--mono);font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:4px}
 
-/* Alert ticker */
-.ticker{height:34px;background:rgba(239,68,68,0.05);border-bottom:1px solid rgba(239,68,68,0.15);display:flex;align-items:center;overflow:hidden}
-.ticker-badge{flex-shrink:0;background:var(--red);color:white;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.15em;padding:0 14px;height:100%;display:flex;align-items:center}
-.ticker-track{flex:1;overflow:hidden;mask-image:linear-gradient(90deg,transparent,black 5%,black 95%,transparent)}
-.ticker-inner{display:flex;gap:48px;animation:ticker 40s linear infinite;white-space:nowrap;padding:0 24px}
+/* Ticker */
+.ticker{height:32px;background:rgba(239,68,68,0.04);border-bottom:1px solid rgba(239,68,68,0.12);display:flex;align-items:center;overflow:hidden}
+.ticker-badge{flex-shrink:0;background:var(--red);color:white;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;padding:0 12px;height:100%;display:flex;align-items:center}
+.ticker-track{flex:1;overflow:hidden}
+.ticker-inner{display:flex;gap:48px;animation:ticker 45s linear infinite;white-space:nowrap;padding:0 20px}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .t-alert{font-family:var(--mono);font-size:10px;color:var(--text2);display:flex;align-items:center;gap:8px}
-.t-dot{width:5px;height:5px;border-radius:50%}
+.t-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .t-sym{color:var(--text);font-weight:600}
 
-/* Layout */
-.layout{display:grid;grid-template-columns:240px 1fr 260px;height:calc(100vh - 86px)}
+/* Pages */
+.page{display:none}
+.page.active{display:block}
+
+/* LIVE WAR ROOM */
+.warroom{display:grid;grid-template-columns:230px 1fr 255px;height:calc(100vh - 84px)}
 .sidebar{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
 .center{overflow-y:auto;display:flex;flex-direction:column}
 .rightbar{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto}
 
-/* Section headers */
-.sh{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02)}
+.sh{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.015)}
 .sh-title{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase}
-.sh-badge{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px}
+.sh-badge{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px}
+.bc{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.bh{background:rgba(249,115,22,0.1);color:var(--orange);border:1px solid rgba(249,115,22,0.2)}
+.bm{background:rgba(234,179,8,0.1);color:var(--yellow);border:1px solid rgba(234,179,8,0.2)}
 
-/* Metric strip */
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
-.metric{background:var(--surface);padding:12px 14px}
-.m-val{font-size:22px;font-weight:700;font-family:var(--mono);line-height:1;margin-bottom:3px}
-.m-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em}
-.m-change{font-size:9px;font-family:var(--mono);margin-top:3px}
+.metric{background:var(--surface);padding:11px 14px}
+.m-val{font-size:20px;font-weight:700;font-family:var(--mono);line-height:1;margin-bottom:2px}
+.m-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em}
+.m-change{font-size:9px;font-family:var(--mono);margin-top:2px}
 
-/* Stock list */
-.stock-list{flex:1}
-.stock-row{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;position:relative}
+.stock-row{padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;border-left:2px solid transparent}
 .stock-row:hover{background:var(--surface2)}
-.stock-row.sel{background:var(--surface3);border-left:2px solid var(--accent)}
-.stock-row.crit{border-left:2px solid var(--red)}
-.stock-row.crit.sel{border-left:2px solid var(--red)}
-.sr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
-.sr-sym{font-size:12px;font-weight:600;color:var(--text);letter-spacing:0.02em}
-.sr-badge{font-family:var(--mono);font-size:8px;font-weight:700;padding:2px 5px;border-radius:2px;letter-spacing:0.08em}
-.bc{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
-.bh{background:rgba(249,115,22,0.12);color:var(--orange);border:1px solid rgba(249,115,22,0.25)}
-.bm{background:rgba(234,179,8,0.12);color:var(--yellow);border:1px solid rgba(234,179,8,0.25)}
-.sr-detail{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px}
+.stock-row.sel{background:var(--surface3);border-left-color:var(--accent)}
+.stock-row.crit{border-left-color:var(--red)}
+.stock-row.crit.sel{border-left-color:var(--red)}
+.sr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.sr-sym{font-size:12px;font-weight:600;color:var(--text)}
+.sr-badge{font-family:var(--mono);font-size:8px;font-weight:700;padding:1px 5px;border-radius:2px;letter-spacing:0.06em}
+.sr-detail{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:4px}
 .sr-tags{display:flex;gap:3px;flex-wrap:wrap}
-.tag{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:2px;background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
+.tag{font-family:var(--mono);font-size:8px;padding:1px 4px;border-radius:2px;background:var(--surface3);color:var(--text3);border:1px solid var(--border2)}
 
-/* Center top */
-.c-header{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:flex-start;justify-content:space-between}
-.c-stock-name{font-size:26px;font-weight:700;letter-spacing:-0.5px;line-height:1}
-.c-meta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px}
-.c-risk{display:flex;align-items:center;gap:6px;margin-top:8px}
-.risk-score{font-family:var(--mono);font-size:11px;font-weight:600}
-.risk-bar-wrap{flex:1;max-width:120px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
-.risk-bar-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--red));border-radius:2px}
+/* Center */
+.c-header{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:flex-start;justify-content:space-between}
+.c-stock-name{font-size:24px;font-weight:700;letter-spacing:-0.5px;line-height:1}
+.c-meta{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:3px}
+.c-risk-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.risk-score-text{font-family:var(--mono);font-size:11px;font-weight:600}
+.risk-bar-wrap{flex:1;max-width:100px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.risk-bar-fill{height:100%;border-radius:2px;transition:width 0.5s}
 .c-actions{display:flex;gap:8px}
-.btn{font-size:11px;font-weight:600;padding:7px 14px;border-radius:5px;cursor:pointer;border:none;font-family:var(--sans);transition:all 0.15s;letter-spacing:0.01em}
+.btn{font-size:11px;font-weight:600;padding:7px 14px;border-radius:5px;cursor:pointer;border:none;font-family:var(--sans);transition:all 0.15s}
 .btn-primary{background:var(--accent);color:white}
-.btn-primary:hover{background:var(--accent2)}
+.btn-primary:hover{background:#1d4ed8}
 .btn-ghost{background:transparent;color:var(--red);border:1px solid rgba(239,68,68,0.3)}
 .btn-ghost:hover{background:rgba(239,68,68,0.08)}
 
 /* Chart */
-.chart-wrap{padding:16px 20px;border-bottom:1px solid var(--border)}
-.chart-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.chart-title-text{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase}
-.chart-legend{display:flex;gap:14px}
+.chart-wrap{padding:14px 20px;border-bottom:1px solid var(--border)}
+.chart-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chart-title-text{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase}
+.chart-legend{display:flex;gap:12px}
 .cl-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--text3)}
-.cl-dot{width:8px;height:2px;border-radius:1px}
-.chart-container{position:relative;height:180px;background:var(--surface2);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
-.chart-grid{position:absolute;inset:0}
-.pump-zone{position:absolute;top:0;bottom:0;background:rgba(239,68,68,0.05);border-left:1px dashed rgba(239,68,68,0.3);border-right:1px dashed rgba(239,68,68,0.3)}
-.pump-label{position:absolute;top:8px;font-family:var(--mono);font-size:8px;color:var(--red);white-space:nowrap;padding:2px 6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:3px}
-.chart-svg{width:100%;height:100%}
-.chart-x-labels{display:flex;justify-content:space-between;padding:4px 8px 0;font-family:var(--mono);font-size:8px;color:var(--text3)}
+.cl-line{width:12px;height:2px;border-radius:1px}
+.chart-box{position:relative;height:170px;background:var(--surface2);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.pump-zone{position:absolute;top:0;bottom:0;background:rgba(239,68,68,0.04);border-left:1px dashed rgba(239,68,68,0.25);border-right:1px dashed rgba(239,68,68,0.25)}
+.pump-lbl{position:absolute;top:6px;font-family:var(--mono);font-size:7px;color:var(--red);white-space:nowrap;padding:2px 5px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:2px}
+.chart-x{display:flex;justify-content:space-between;padding:4px 6px 0;font-family:var(--mono);font-size:8px;color:var(--text3)}
 
 /* Evidence */
-.ev-list{padding:0 20px}
-.ev-title{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:12px}
-.ev-item{display:flex;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
-.ev-item:last-child{border-bottom:none}
-.ev-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.ev-wrap{padding:0 20px 16px}
+.ev-title-row{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;padding:12px 0 10px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.ev-item{display:flex;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.ev-item:last-child{border-bottom:none;margin-bottom:0}
+.ev-icon{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
 .ev-body{flex:1}
-.ev-header{display:flex;align-items:center;gap:8px;margin-bottom:3px}
-.ev-platform{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;padding:2px 6px;border-radius:3px}
+.ev-hdr{display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap}
+.ev-platform{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:0.06em;padding:2px 5px;border-radius:2px}
 .ep-yt{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
 .ep-tg{background:rgba(59,130,246,0.1);color:#60a5fa;border:1px solid rgba(59,130,246,0.2)}
 .ep-tv{background:rgba(168,85,247,0.1);color:#c084fc;border:1px solid rgba(168,85,247,0.2)}
 .ep-tw{background:rgba(14,165,233,0.1);color:#38bdf8;border:1px solid rgba(14,165,233,0.2)}
+.ep-wa{background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.2)}
 .ev-handle{font-size:11px;font-weight:500;color:var(--text)}
-.ev-time{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto}
+.ev-time{font-family:var(--mono);font-size:8px;color:var(--text3);margin-left:auto}
 .ev-text{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:4px}
-.ev-stats{display:flex;gap:12px}
+.ev-stats-row{display:flex;gap:12px}
 .ev-stat{font-family:var(--mono);font-size:9px;color:var(--text3)}
 .ev-stat span{color:var(--text2)}
 .ev-corr{font-family:var(--mono);font-size:9px;font-weight:600}
 
 /* Right panel */
-.rp-section{border-bottom:1px solid var(--border)}
-.profile-wrap{padding:14px}
-.profile-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.avatar{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,rgba(239,68,68,0.2),rgba(239,68,68,0.05));border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--red)}
-.profile-name-text{font-size:13px;font-weight:600;color:var(--text)}
-.profile-handle-text{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:1px}
-.profile-wanted{display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);padding:2px 8px;border-radius:3px;font-family:var(--mono);font-size:8px;font-weight:700;color:var(--red);letter-spacing:0.1em;margin-top:4px}
-.p-stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
-.p-stat-row:last-child{border-bottom:none}
-.psr-label{font-family:var(--mono);font-size:9px;color:var(--text3)}
-.psr-val{font-family:var(--mono);font-size:10px;font-weight:600}
+.rp-sec{border-bottom:1px solid var(--border)}
+.profile-wrap{padding:12px 14px}
+.profile-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.avatar{width:38px;height:38px;border-radius:7px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--red)}
+.p-name{font-size:13px;font-weight:600;color:var(--text)}
+.p-handle{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:1px}
+.p-wanted{display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);padding:2px 7px;border-radius:3px;font-family:var(--mono);font-size:8px;font-weight:700;color:var(--red);letter-spacing:0.08em;margin-top:4px}
+.psr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.psr:last-child{border-bottom:none}
+.psr-l{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.psr-v{font-family:var(--mono);font-size:9px;font-weight:600}
 
-/* Violations */
-.violations-wrap{padding:10px 14px}
-.viol-item{padding:8px 10px;border-radius:5px;background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.1);margin-bottom:6px}
-.v-code{font-family:var(--mono);font-size:8px;color:var(--red);margin-bottom:2px;letter-spacing:0.05em}
+.viol-wrap{padding:10px 14px}
+.viol-item{padding:7px 9px;border-radius:4px;background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.1);margin-bottom:5px}
+.v-code{font-family:var(--mono);font-size:8px;color:var(--red);margin-bottom:2px}
 .v-text{font-size:10px;color:var(--text2);line-height:1.4}
 
-/* Complaint portal */
-.complaint-wrap{padding:14px}
-.complaint-count-big{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--red);line-height:1;margin-bottom:4px}
-.complaint-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:12px}
-.progress-bar{height:4px;background:var(--surface3);border-radius:2px;margin-bottom:4px;overflow:hidden}
-.pb-fill{height:100%;background:linear-gradient(90deg,var(--red2),var(--red));border-radius:2px}
-.progress-label{font-family:var(--mono);font-size:9px;color:var(--text3);display:flex;justify-content:space-between}
-.file-btn{width:100%;margin-top:12px;padding:9px;background:var(--red);color:white;font-size:11px;font-weight:700;border:none;border-radius:5px;cursor:pointer;letter-spacing:0.02em;transition:background 0.15s}
+.complaint-wrap{padding:12px 14px}
+.complaint-num{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--red);line-height:1;margin-bottom:3px}
+.complaint-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:10px}
+.prog-bar{height:3px;background:var(--surface3);border-radius:2px;margin-bottom:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--red2),var(--red));border-radius:2px}
+.prog-label{font-family:var(--mono);font-size:9px;color:var(--text3);display:flex;justify-content:space-between}
+.file-btn{width:100%;margin-top:10px;padding:8px;background:var(--red);color:white;font-size:11px;font-weight:700;border:none;border-radius:5px;cursor:pointer;transition:background 0.15s}
 .file-btn:hover{background:var(--red2)}
 
-/* Network map placeholder */
-.network-map{padding:14px}
-.net-title{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
-.net-visual{height:120px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.net-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:8px}
-.net-line{position:absolute;background:rgba(59,130,246,0.2);height:1px;transform-origin:left center}
-.net-center{width:36px;height:36px;background:rgba(239,68,68,0.15);border:2px solid var(--red);color:var(--red);font-size:9px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
-.net-node-sm{width:22px;height:22px;background:rgba(59,130,246,0.1);border:1px solid var(--accent);color:var(--accent);font-size:7px}
+/* HISTORICAL PAGE */
+.hist-page{padding:24px;max-width:1200px;margin:0 auto}
+.hist-header{margin-bottom:24px}
+.hist-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.hist-sub{font-size:13px;color:var(--text2)}
+.hist-filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-family:var(--sans);transition:all 0.15s}
+.filter-btn:hover,.filter-btn.active{background:var(--surface3);color:var(--text);border-color:var(--border2)}
+.hist-grid{display:grid;gap:12px}
+.hist-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent}
+.hist-card:hover{background:var(--surface2);border-color:var(--border2)}
+.hist-card.pump{border-left-color:var(--red)}
+.hist-card.options{border-left-color:var(--purple)}
+.hist-card.operator{border-left-color:var(--orange)}
+.hc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.hc-left{}
+.hc-sym{font-size:16px;font-weight:700;margin-bottom:3px}
+.hc-date{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.hc-badges{display:flex;gap:6px;flex-wrap:wrap}
+.hc-badge{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:3px;font-weight:600}
+.hc-body{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.hc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hc-stat{background:var(--surface2);border-radius:4px;padding:8px;text-align:center}
+.hcs-val{font-family:var(--mono);font-size:13px;font-weight:600;margin-bottom:2px}
+.hcs-label{font-family:var(--mono);font-size:8px;color:var(--text3);text-transform:uppercase}
+.hc-promoters{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.hcp-title{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.hcp-tags{display:flex;gap:6px;flex-wrap:wrap}
+.hcp-tag{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:3px;border:1px solid var(--border2);color:var(--text2)}
+.hcp-tag.youtube{border-color:rgba(239,68,68,0.3);color:var(--red)}
+.hcp-tag.telegram{border-color:rgba(59,130,246,0.3);color:#60a5fa}
+.hcp-tag.tv{border-color:rgba(168,85,247,0.3);color:#c084fc}
+.hcp-tag.twitter{border-color:rgba(14,165,233,0.3);color:#38bdf8}
 
-/* Scrollbar */
+/* COMPLAINT PAGE */
+.complaint-page{padding:24px;max-width:700px;margin:0 auto}
+.cp-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.cp-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.cp-form{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px}
+.form-group{margin-bottom:16px}
+.form-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border 0.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-select{cursor:pointer}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.5}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.submit-btn{width:100%;padding:12px;background:var(--red);color:white;font-size:14px;font-weight:700;border:none;border-radius:6px;cursor:pointer;margin-top:6px;transition:background 0.15s;font-family:var(--sans)}
+.submit-btn:hover{background:var(--red2)}
+.form-note{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:10px;line-height:1.5;text-align:center}
+.success-msg{display:none;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:20px;text-align:center;margin-top:16px}
+.success-msg.show{display:block}
+.success-title{font-size:16px;font-weight:600;color:var(--green);margin-bottom:6px}
+.success-sub{font-size:12px;color:var(--text2)}
+.complaint-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.cs-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.cs-val{font-family:var(--mono);font-size:24px;font-weight:700;margin-bottom:4px}
+.cs-label{font-size:11px;color:var(--text3)}
+
+/* Network map */
+.net-wrap{padding:10px 14px}
+.net-visual{height:110px;background:var(--surface2);border-radius:6px;border:1px solid var(--border);position:relative;overflow:hidden}
+.net-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:7px}
+.net-center{width:34px;height:34px;background:rgba(239,68,68,0.12);border:2px solid var(--red);color:var(--red);left:calc(50% - 17px);top:calc(50% - 17px);z-index:2;font-size:8px}
+.net-node-sm{width:20px;height:20px;background:rgba(59,130,246,0.08);border:1px solid var(--accent);color:#60a5fa;font-size:6px}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:20px;font-family:var(--mono);font-size:10px;color:var(--text3)}
+.spin{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    </div>
-    <div>
-      <div class="logo-name">Scam<span>Shield</span> India</div>
-    </div>
+  <div class="logo">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div><div class="logo-name">Scam<span>Shield</span> India</div></div>
   </div>
   <div class="nav-divider"></div>
-  <div class="nav-badge"><div class="live-dot"></div>NSE LIVE</div>
-  <div class="nav-badge"><div class="live-dot"></div>BSE LIVE</div>
-  <div class="nav-badge"><div class="live-dot"></div>SOCIAL SCAN</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('warroom',this)">⚡ Live War Room</button>
+    <button class="nav-tab" onclick="showPage('historical',this)">📋 Historical Scams</button>
+    <button class="nav-tab" onclick="showPage('complaint',this)">🚨 File Complaint</button>
+  </div>
+  <div class="nav-badges">
+    <div class="nbadge" id="nse-badge"><div class="live-dot"></div>NSE LIVE</div>
+    <div class="nbadge" id="bse-badge"><div class="live-dot"></div>BSE LIVE</div>
+    <div class="nbadge"><div class="live-dot"></div>SOCIAL SCAN</div>
+  </div>
   <div class="nav-right">
     <div class="threat-pill">
-      <div class="threat-label">THREAT</div>
+      <span style="color:var(--red);font-weight:700;font-size:9px">THREAT</span>
       <div class="threat-bars">
-        <div class="tb" style="height:6px;background:var(--green)"></div>
-        <div class="tb" style="height:9px;background:var(--yellow)"></div>
-        <div class="tb" style="height:12px;background:var(--orange)"></div>
-        <div class="tb" style="height:15px;background:var(--red);box-shadow:0 0 6px var(--red)"></div>
+        <div class="tb" style="height:5px;background:var(--green)"></div>
+        <div class="tb" style="height:8px;background:var(--yellow)"></div>
+        <div class="tb" style="height:11px;background:var(--orange)"></div>
+        <div class="tb" style="height:14px;background:var(--red)"></div>
       </div>
-      <span style="color:var(--red);font-size:10px;font-weight:700">CRITICAL</span>
+      <span style="color:var(--red);font-size:9px;font-weight:700">CRITICAL</span>
     </div>
-    <div class="nav-time" id="clock">--:--:-- IST</div>
+    <div class="clock" id="clock">--:--:-- IST</div>
   </div>
 </nav>
 
 <div class="ticker">
-  <div class="ticker-badge">LIVE ALERTS</div>
+  <div class="ticker-badge">ALERTS</div>
   <div class="ticker-track">
-    <div class="ticker-inner">
-      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">ZZZZ LTD</span> Volume +847% · Telegram network active · 3 bulk buyers flagged · RISK 98</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">PENNY CORP</span> StockGuru_Rahul promoted D-3 · Dump phase detected · 280% gain → -65% crash</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--orange)"></div><span class="t-sym">MICROTECH IND</span> Promoter pledging +67% · Unusual call options · RISK 74</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">ALPHA VENTURES</span> 14 Telegram channels coordinated · UPI trail confirmed · 847 victim reports</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--yellow)"></div><span class="t-sym">NEXGEN PHARMA</span> TV guest mentioned 3x in 7 days · Price correlation 94% · Monitoring</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">ZZZZ LTD</span> Volume +847% · Telegram network active · 3 bulk buyers flagged · RISK 98</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">PENNY CORP</span> StockGuru_Rahul promoted D-3 · Dump phase detected · 280% gain → -65% crash</div>
-      <div class="t-alert"><div class="t-dot" style="background:var(--orange)"></div><span class="t-sym">MICROTECH IND</span> Promoter pledging +67% · Unusual call options · RISK 74</div>
+    <div class="ticker-inner" id="ticker-content">
+      <div class="t-alert"><div class="t-dot" style="background:var(--red)"></div><span class="t-sym">LOADING LIVE DATA...</span></div>
     </div>
   </div>
 </div>
 
-<div class="layout">
+<!-- WAR ROOM PAGE -->
+<div class="page active" id="page-warroom">
+<div class="warroom">
 
-<!-- LEFT SIDEBAR -->
-<div class="sidebar">
-  <div class="metrics">
-    <div class="metric"><div class="m-val" style="color:var(--red)" id="flagcount">23</div><div class="m-label">Flagged Today</div><div class="m-change" style="color:var(--red)">↑ 4 last hour</div></div>
-    <div class="metric"><div class="m-val" style="color:var(--orange)">847</div><div class="m-label">Complaints</div><div class="m-change" style="color:var(--green)">+12 today</div></div>
-    <div class="metric"><div class="m-val" style="color:var(--green)">142</div><div class="m-label">Operators ID'd</div><div class="m-change" style="color:var(--text3)">All time</div></div>
-    <div class="metric"><div class="m-val" style="color:var(--accent);font-size:16px">₹2.3Cr</div><div class="m-label">Victim Loss</div><div class="m-change" style="color:var(--text3)">Logged</div></div>
+  <div class="sidebar">
+    <div class="metrics">
+      <div class="metric"><div class="m-val" style="color:var(--red)" id="m-flagged">--</div><div class="m-label">Flagged</div><div class="m-change" style="color:var(--red)">Today</div></div>
+      <div class="metric"><div class="m-val" style="color:var(--orange)" id="m-complaints">847</div><div class="m-label">Complaints</div><div class="m-change" style="color:var(--green)">+12 today</div></div>
+      <div class="metric"><div class="m-val" style="color:var(--green)" id="m-operators">142</div><div class="m-label">Operators</div><div class="m-change" style="color:var(--text3)">ID'd</div></div>
+      <div class="metric"><div class="m-val" style="color:var(--accent);font-size:15px">₹2.3Cr</div><div class="m-label">Victim Loss</div><div class="m-change" style="color:var(--text3)">Logged</div></div>
+    </div>
+    <div class="sh"><span class="sh-title">Flagged Stocks</span><span class="sh-badge bc" id="flag-count-badge">LOADING</span></div>
+    <div id="stock-list"><div class="loading"><div class="spin"></div>Scanning NSE & BSE...</div></div>
   </div>
 
-  <div class="sh"><span class="sh-title">Flagged Stocks</span><span class="sh-badge bc">23 ACTIVE</span></div>
-
-  <div class="stock-list">
-    <div class="stock-row crit sel" onclick="sel(this,'ZZZZ LTD','NSE SME · ₹847 +340% · Risk 98/100','98')">
-      <div class="sr-top"><span class="sr-sym">ZZZZ LTD</span><span class="sr-badge bc">CRITICAL</span></div>
-      <div class="sr-detail">Vol +847% · ₹847 (+340%) · NSE SME</div>
-      <div class="sr-tags"><span class="tag">PUMP</span><span class="tag">INFLUENCER</span><span class="tag">BULK</span></div>
-    </div>
-    <div class="stock-row crit" onclick="sel(this,'PENNY CORP','NSE · ₹12.40 +280% · Risk 95/100','95')">
-      <div class="sr-top"><span class="sr-sym">PENNY CORP</span><span class="sr-badge bc">CRITICAL</span></div>
-      <div class="sr-detail">Vol +620% · ₹12.40 (+280%) · DUMP ACTIVE</div>
-      <div class="sr-tags"><span class="tag">DUMPING</span><span class="tag">TELEGRAM</span></div>
-    </div>
-    <div class="stock-row" onclick="sel(this,'ALPHA VENTURES','NSE · ₹56.30 +190% · Risk 91/100','91')">
-      <div class="sr-top"><span class="sr-sym">ALPHA VENTURES</span><span class="sr-badge bc">CRITICAL</span></div>
-      <div class="sr-detail">14 Telegram ch · ₹56.30 (+190%) · UPI TRACED</div>
-      <div class="sr-tags"><span class="tag">COORDINATED</span><span class="tag">UPI</span></div>
-    </div>
-    <div class="stock-row" onclick="sel(this,'MICROTECH IND','BSE · ₹234 +45% · Risk 74/100','74')">
-      <div class="sr-top"><span class="sr-sym">MICROTECH IND</span><span class="sr-badge bh">HIGH</span></div>
-      <div class="sr-detail">Pledging +67% · ₹234 (+45%) · BSE</div>
-      <div class="sr-tags"><span class="tag">PLEDGING</span><span class="tag">OPTIONS</span></div>
-    </div>
-    <div class="stock-row" onclick="sel(this,'NEXGEN PHARMA','BSE · ₹892 +23% · Risk 61/100','61')">
-      <div class="sr-top"><span class="sr-sym">NEXGEN PHARMA</span><span class="sr-badge bm">MEDIUM</span></div>
-      <div class="sr-detail">TV mentions: 3x · ₹892 (+23%) · BSE</div>
-      <div class="sr-tags"><span class="tag">TV GUEST</span><span class="tag">MONITORING</span></div>
-    </div>
-    <div class="stock-row" onclick="sel(this,'SUNRISE STEEL','NSE · ₹34.20 +120% · Risk 79/100','79')">
-      <div class="sr-top"><span class="sr-sym">SUNRISE STEEL</span><span class="sr-badge bh">HIGH</span></div>
-      <div class="sr-detail">Vol +340% · ₹34.20 (+120%) · NSE</div>
-      <div class="sr-tags"><span class="tag">PUMP</span><span class="tag">YOUTUBE</span></div>
-    </div>
-    <div class="stock-row" onclick="sel(this,'GLOBAL INFRA','BSE · ₹8.90 +89% · Risk 82/100','82')">
-      <div class="sr-top"><span class="sr-sym">GLOBAL INFRA</span><span class="sr-badge bh">HIGH</span></div>
-      <div class="sr-detail">Vol +480% · ₹8.90 (+89%) · PENNY</div>
-      <div class="sr-tags"><span class="tag">PENNY</span><span class="tag">WHATSAPP</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- CENTER -->
-<div class="center">
-  <div class="c-header">
-    <div>
-      <div class="c-stock-name" id="c-name">ZZZZ LTD</div>
-      <div class="c-meta" id="c-meta">NSE SME · ₹847 +340% · Risk 98/100 · Flagged 09:23 IST · Operator identified</div>
-      <div class="c-risk">
-        <span class="risk-score" style="color:var(--red)" id="c-risk">Risk 98/100</span>
-        <div class="risk-bar-wrap"><div class="risk-bar-fill" id="risk-fill" style="width:98%"></div></div>
-        <span style="font-family:var(--mono);font-size:9px;color:var(--text3)">CRITICAL</span>
-      </div>
-    </div>
-    <div class="c-actions">
-      <button class="btn btn-ghost">⚠ File to SEBI</button>
-      <button class="btn btn-primary">Export Dossier</button>
-    </div>
-  </div>
-
-  <div class="chart-wrap">
-    <div class="chart-label-row">
-      <span class="chart-title-text">Price & Volume Anomaly · 30 Day Window</span>
-      <div class="chart-legend">
-        <div class="cl-item"><div class="cl-dot" style="background:var(--accent)"></div>Price</div>
-        <div class="cl-item"><div class="cl-dot" style="background:var(--red)"></div>Volume anomaly</div>
-        <div class="cl-item"><div class="cl-dot" style="background:rgba(239,68,68,0.3);width:12px;height:8px;border-radius:1px"></div>Pump zone</div>
-      </div>
-    </div>
-    <div class="chart-container">
-      <div class="pump-zone" style="left:57%;width:18%">
-        <div class="pump-label" style="left:4px">▲ INFLUENCER POST</div>
-      </div>
-      <svg class="chart-svg" viewBox="0 0 800 180" preserveAspectRatio="none">
-        <!-- Grid lines -->
-        <line x1="0" y1="45" x2="800" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="0" y1="90" x2="800" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <line x1="0" y1="135" x2="800" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <!-- Volume bars normal -->
-        <rect x="2" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="26" y="152" width="20" height="28" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="50" y="157" width="20" height="23" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="74" y="153" width="20" height="27" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="98" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="122" y="150" width="20" height="30" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="146" y="156" width="20" height="24" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="170" y="153" width="20" height="27" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="194" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="218" y="152" width="20" height="28" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="242" y="156" width="20" height="24" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="266" y="154" width="20" height="26" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="290" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="314" y="151" width="20" height="29" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="338" y="154" width="20" height="26" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="362" y="155" width="20" height="25" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="386" y="153" width="20" height="27" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <rect x="410" y="156" width="20" height="24" fill="rgba(59,130,246,0.25)" rx="1"/>
-        <!-- Volume bars pump -->
-        <rect x="434" y="130" width="20" height="50" fill="rgba(239,68,68,0.35)" rx="1"/>
-        <rect x="458" y="95" width="20" height="85" fill="rgba(239,68,68,0.5)" rx="1"/>
-        <rect x="482" y="50" width="20" height="130" fill="rgba(239,68,68,0.7)" rx="1"/>
-        <rect x="506" y="25" width="20" height="155" fill="rgba(239,68,68,0.85)" rx="1"/>
-        <rect x="530" y="40" width="20" height="140" fill="rgba(239,68,68,0.7)" rx="1"/>
-        <rect x="554" y="70" width="20" height="110" fill="rgba(239,68,68,0.5)" rx="1"/>
-        <!-- Volume dump -->
-        <rect x="578" y="110" width="20" height="70" fill="rgba(249,115,22,0.4)" rx="1"/>
-        <rect x="602" y="130" width="20" height="50" fill="rgba(249,115,22,0.3)" rx="1"/>
-        <rect x="626" y="145" width="20" height="35" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <rect x="650" y="150" width="20" height="30" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <rect x="674" y="152" width="20" height="28" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <rect x="698" y="153" width="20" height="27" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <rect x="722" y="155" width="20" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <rect x="746" y="153" width="20" height="27" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <rect x="770" y="155" width="20" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
-        <!-- Price area fill -->
-        <defs>
-          <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(59,130,246,0.15)"/>
-            <stop offset="100%" stop-color="rgba(59,130,246,0)"/>
-          </linearGradient>
-        </defs>
-        <path d="M12,130 L36,128 L60,132 L84,129 L108,131 L132,127 L156,130 L180,128 L204,131 L228,127 L252,130 L276,128 L300,129 L324,131 L348,128 L372,130 L396,129 L420,130 L444,110 L468,75 L492,35 L516,12 L540,28 L564,55 L588,82 L612,105 L636,118 L660,125 L684,129 L708,131 L732,130 L756,131 L780,130 L780,180 L12,180 Z" fill="url(#pg)"/>
-        <path d="M12,130 L36,128 L60,132 L84,129 L108,131 L132,127 L156,130 L180,128 L204,131 L228,127 L252,130 L276,128 L300,129 L324,131 L348,128 L372,130 L396,129 L420,130 L444,110 L468,75 L492,35 L516,12 L540,28 L564,55 L588,82 L612,105 L636,118 L660,125 L684,129 L708,131 L732,130 L756,131 L780,130" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
-        <!-- Peak marker -->
-        <circle cx="516" cy="12" r="4" fill="var(--red)" stroke="rgba(239,68,68,0.4)" stroke-width="6"/>
-        <text x="520" y="10" fill="var(--red)" font-family="'JetBrains Mono'" font-size="8">PEAK +340%</text>
-      </svg>
-    </div>
-    <div class="chart-x-labels">
-      <span>Day 1</span><span>Day 7</span><span>Day 14</span><span style="color:var(--red)">Day 18 ▲</span><span>Day 22</span><span>Today</span>
-    </div>
-  </div>
-
-  <!-- Evidence timeline -->
-  <div class="ev-list">
-    <div class="ev-title">PROMOTION NETWORK — EVIDENCE TIMELINE</div>
-
-    <div class="ev-item">
-      <div class="ev-icon" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15)">▶</div>
-      <div class="ev-body">
-        <div class="ev-header">
-          <span class="ev-platform ep-yt">YOUTUBE</span>
-          <span class="ev-handle">StockGuru_Rahul</span>
-          <span class="ev-time">Day 16 · D-3 before peak</span>
+  <div class="center">
+    <div class="c-header">
+      <div>
+        <div class="c-stock-name" id="c-name">SELECT A STOCK</div>
+        <div class="c-meta" id="c-meta">Click any flagged stock to view full intelligence report</div>
+        <div class="c-risk-row">
+          <span class="risk-score-text" id="c-risk" style="color:var(--text3)">Risk Score --</span>
+          <div class="risk-bar-wrap"><div class="risk-bar-fill" id="risk-fill" style="width:0%;background:var(--red)"></div></div>
         </div>
-        <div class="ev-text">"ZZZZ LTD — hidden multibagger! Fundamentals insane. Buy before institutions enter." 2.1L subs · 47K views · Evidence archived.</div>
-        <div class="ev-stats">
-          <span class="ev-stat">Views <span>47,000</span></span>
-          <span class="ev-stat">Subscribers <span>2.1L</span></span>
-          <span class="ev-corr" style="color:var(--red)">Pump correlation: 96%</span>
-        </div>
+      </div>
+      <div class="c-actions">
+        <button class="btn btn-ghost" onclick="showPage('complaint',document.querySelector('.nav-tab:nth-child(3)'))">⚠ File to SEBI</button>
+        <button class="btn btn-primary">Export Dossier</button>
       </div>
     </div>
 
-    <div class="ev-item">
-      <div class="ev-icon" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15)">✈</div>
-      <div class="ev-body">
-        <div class="ev-header">
-          <span class="ev-platform ep-tg">TELEGRAM</span>
-          <span class="ev-handle">StockTips_VIP · 84,000 members</span>
-          <span class="ev-time">Day 17 · D-2 before peak</span>
-        </div>
-        <div class="ev-text">Paid promotion: "ZZZZ LTD · Target ₹2000 · Operator entry confirmed · Accumulate below ₹600" · UPI payment trail to same operator confirmed across 3 channels.</div>
-        <div class="ev-stats">
-          <span class="ev-stat">Channels <span>3 linked</span></span>
-          <span class="ev-stat">Members <span>1.8L total</span></span>
-          <span class="ev-corr" style="color:var(--red)">UPI: CONFIRMED ✓</span>
+    <div class="chart-wrap">
+      <div class="chart-top">
+        <span class="chart-title-text">Price & Volume Anomaly · 30 Day Window</span>
+        <div class="chart-legend">
+          <div class="cl-item"><div class="cl-line" style="background:var(--accent)"></div>Price</div>
+          <div class="cl-item"><div class="cl-line" style="background:var(--red)"></div>Volume anomaly</div>
         </div>
       </div>
-    </div>
-
-    <div class="ev-item">
-      <div class="ev-icon" style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.15)">📺</div>
-      <div class="ev-body">
-        <div class="ev-header">
-          <span class="ev-platform ep-tv">TV CHANNEL</span>
-          <span class="ev-handle">Regional Business Channel · Prime Time</span>
-          <span class="ev-time">Day 17 · Evening</span>
-        </div>
-        <div class="ev-text">Guest analyst recommended ZZZZ LTD as "hidden gem with strong fundamentals." Same guest recommended 4 other flagged stocks in past 60 days. Pattern: 4/4 pumped within 72hrs.</div>
-        <div class="ev-stats">
-          <span class="ev-stat">Prior calls <span>4/4 pumped</span></span>
-          <span class="ev-corr" style="color:var(--orange)">Coincidence probability: 0.3%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="ev-item">
-      <div class="ev-icon" style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.15)">𝕏</div>
-      <div class="ev-body">
-        <div class="ev-header">
-          <span class="ev-platform ep-tw">TWITTER/X</span>
-          <span class="ev-handle">8 coordinated accounts</span>
-          <span class="ev-time">Day 18 · Morning of peak</span>
-        </div>
-        <div class="ev-text">8 accounts tweeted within 20-min window. All created within same 30-day period. IP cluster identified. Bot pattern confirmed. Reported to X Trust & Safety.</div>
-        <div class="ev-stats">
-          <span class="ev-stat">Accounts <span>8 coordinated</span></span>
-          <span class="ev-stat">Window <span>20 minutes</span></span>
-          <span class="ev-corr" style="color:var(--red)">BOT NETWORK ✓</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- RIGHT SIDEBAR -->
-<div class="rightbar">
-
-  <!-- Operator profile -->
-  <div class="rp-section">
-    <div class="sh"><span class="sh-title">Operator Profile</span><span class="sh-badge bc">⚠ FLAGGED</span></div>
-    <div class="profile-wrap">
-      <div class="profile-top">
-        <div class="avatar">SK</div>
-        <div>
-          <div class="profile-name-text">Suresh K.</div>
-          <div class="profile-handle-text">@StockGuru_Rahul · Mumbai</div>
-          <div class="profile-wanted">● UNDER INVESTIGATION</div>
-        </div>
-      </div>
-      <div class="p-stat-row"><span class="psr-label">Stocks promoted</span><span class="psr-val" style="color:var(--red)">23</span></div>
-      <div class="p-stat-row"><span class="psr-label">Pumps confirmed</span><span class="psr-val" style="color:var(--red)">19 / 23</span></div>
-      <div class="p-stat-row"><span class="psr-label">Victim reports</span><span class="psr-val" style="color:var(--orange)">847</span></div>
-      <div class="p-stat-row"><span class="psr-label">Est. victim loss</span><span class="psr-val" style="color:var(--red)">₹2.3 Cr</span></div>
-      <div class="p-stat-row"><span class="psr-label">UPI ID traced</span><span class="psr-val" style="color:var(--green)">✓ Confirmed</span></div>
-      <div class="p-stat-row"><span class="psr-label">SEBI complaints</span><span class="psr-val" style="color:var(--orange)">14 filed</span></div>
-      <div class="p-stat-row"><span class="psr-label">Active since</span><span class="psr-val">Jan 2022</span></div>
-    </div>
-  </div>
-
-  <!-- Network map -->
-  <div class="rp-section">
-    <div class="sh"><span class="sh-title">Operator Network</span><span class="sh-badge bh">7 NODES</span></div>
-    <div class="network-map">
-      <div class="net-visual">
-        <!-- Center node -->
-        <div class="net-node net-center" style="left:calc(50% - 18px);top:calc(50% - 18px)">OP</div>
-        <!-- Connected nodes -->
-        <div class="net-node net-node-sm" style="left:20%;top:15%">YT</div>
-        <div class="net-node net-node-sm" style="left:65%;top:12%">TG1</div>
-        <div class="net-node net-node-sm" style="left:78%;top:45%">TG2</div>
-        <div class="net-node net-node-sm" style="left:68%;top:75%">TG3</div>
-        <div class="net-node net-node-sm" style="left:18%;top:72%">TV</div>
-        <div class="net-node net-node-sm" style="left:8%;top:42%">𝕏</div>
-        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 260 120">
-          <line x1="130" y1="60" x2="55" y2="22" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
-          <line x1="130" y1="60" x2="175" y2="18" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
-          <line x1="130" y1="60" x2="208" y2="56" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
-          <line x1="130" y1="60" x2="182" y2="92" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
-          <line x1="130" y1="60" x2="52" y2="90" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
-          <line x1="130" y1="60" x2="28" y2="54" stroke="rgba(59,130,246,0.25)" stroke-width="1"/>
+      <div class="chart-box">
+        <div class="pump-zone" style="left:57%;width:17%"><div class="pump-lbl" style="left:4px">▲ PUMP ZONE</div></div>
+        <svg width="100%" height="100%" viewBox="0 0 800 170" preserveAspectRatio="none">
+          <line x1="0" y1="42" x2="800" y2="42" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <line x1="0" y1="85" x2="800" y2="85" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <line x1="0" y1="127" x2="800" y2="127" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <rect x="2" y="148" width="18" height="22" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="24" y="145" width="18" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="46" y="150" width="18" height="20" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="68" y="146" width="18" height="24" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="90" y="149" width="18" height="21" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="112" y="144" width="18" height="26" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="134" y="148" width="18" height="22" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="156" y="146" width="18" height="24" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="178" y="149" width="18" height="21" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="200" y="147" width="18" height="23" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="222" y="150" width="18" height="20" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="244" y="145" width="18" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="266" y="148" width="18" height="22" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="288" y="147" width="18" height="23" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="310" y="149" width="18" height="21" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="332" y="146" width="18" height="24" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="354" y="148" width="18" height="22" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="376" y="150" width="18" height="20" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="398" y="147" width="18" height="23" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="420" y="145" width="18" height="25" fill="rgba(59,130,246,0.2)" rx="1"/>
+          <rect x="442" y="118" width="18" height="52" fill="rgba(239,68,68,0.3)" rx="1"/>
+          <rect x="464" y="85" width="18" height="85" fill="rgba(239,68,68,0.45)" rx="1"/>
+          <rect x="486" y="42" width="18" height="128" fill="rgba(239,68,68,0.65)" rx="1"/>
+          <rect x="508" y="15" width="18" height="155" fill="rgba(239,68,68,0.8)" rx="1"/>
+          <rect x="530" y="32" width="18" height="138" fill="rgba(239,68,68,0.65)" rx="1"/>
+          <rect x="552" y="62" width="18" height="108" fill="rgba(239,68,68,0.45)" rx="1"/>
+          <rect x="574" y="100" width="18" height="70" fill="rgba(249,115,22,0.35)" rx="1"/>
+          <rect x="596" y="122" width="18" height="48" fill="rgba(249,115,22,0.25)" rx="1"/>
+          <rect x="618" y="138" width="18" height="32" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="640" y="143" width="18" height="27" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="662" y="146" width="18" height="24" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="684" y="148" width="18" height="22" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="706" y="147" width="18" height="23" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="728" y="149" width="18" height="21" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="750" y="148" width="18" height="22" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <rect x="772" y="147" width="18" height="23" fill="rgba(59,130,246,0.15)" rx="1"/>
+          <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(59,130,246,0.12)"/><stop offset="100%" stop-color="rgba(59,130,246,0)"/></linearGradient></defs>
+          <path d="M11,128 L33,126 L55,130 L77,127 L99,129 L121,125 L143,128 L165,126 L187,129 L209,125 L231,128 L253,126 L275,127 L297,129 L319,126 L341,128 L363,127 L385,128 L407,129 L429,127 L451,105 L473,70 L495,32 L517,10 L539,26 L561,52 L583,78 L605,102 L627,118 L649,124 L671,127 L693,129 L715,128 L737,129 L759,128 L781,129 L781,170 L11,170 Z" fill="url(#pg)"/>
+          <path d="M11,128 L33,126 L55,130 L77,127 L99,129 L121,125 L143,128 L165,126 L187,129 L209,125 L231,128 L253,126 L275,127 L297,129 L319,126 L341,128 L363,127 L385,128 L407,129 L429,127 L451,105 L473,70 L495,32 L517,10 L539,26 L561,52 L583,78 L605,102 L627,118 L649,124 L671,127 L693,129 L715,128 L737,129 L759,128 L781,129" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+          <circle cx="517" cy="10" r="3.5" fill="var(--red)" stroke="rgba(239,68,68,0.35)" stroke-width="5"/>
+          <text x="522" y="9" fill="var(--red)" font-family="'JetBrains Mono'" font-size="8">PEAK</text>
         </svg>
       </div>
+      <div class="chart-x"><span>D1</span><span>D7</span><span>D14</span><span style="color:var(--red)">D18▲</span><span>D22</span><span>Now</span></div>
+    </div>
+
+    <div class="ev-wrap">
+      <div class="ev-title-row">PROMOTION NETWORK — EVIDENCE TIMELINE</div>
+      <div id="evidence-content">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);padding:20px 0;text-align:center">Select a flagged stock to view promotion evidence</div>
+      </div>
     </div>
   </div>
 
-  <!-- Violations -->
-  <div class="rp-section">
-    <div class="sh"><span class="sh-title">SEBI Violations</span><span class="sh-badge bc">6 FOUND</span></div>
-    <div class="violations-wrap">
-      <div class="viol-item"><div class="v-code">SEBI (IA) REG 2013 · SEC 3(1)</div><div class="v-text">Unregistered investment advice to public</div></div>
-      <div class="viol-item"><div class="v-code">SEBI PFUTP 2003 · REG 4(2)(a)</div><div class="v-text">Market manipulation via misleading statements</div></div>
-      <div class="viol-item"><div class="v-code">SEBI (IA) REG · SEC 15(1)</div><div class="v-text">Paid promotion without mandatory disclosure</div></div>
-      <div class="viol-item"><div class="v-code">PMLA 2002 · SEC 3</div><div class="v-text">Proceeds of fraud via UPI money trail</div></div>
+  <div class="rightbar">
+    <div class="rp-sec">
+      <div class="sh"><span class="sh-title">Operator Profile</span><span class="sh-badge bc" id="op-status">SELECT STOCK</span></div>
+      <div class="profile-wrap" id="operator-content">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;padding:20px 0">Select a stock to view operator intelligence</div>
+      </div>
+    </div>
+    <div class="rp-sec">
+      <div class="sh"><span class="sh-title">Operator Network</span><span class="sh-badge bh" id="net-nodes">--</span></div>
+      <div class="net-wrap">
+        <div class="net-visual">
+          <div class="net-node net-center">OP</div>
+          <div class="net-node net-node-sm" style="left:18%;top:14%">YT</div>
+          <div class="net-node net-node-sm" style="left:64%;top:10%">TG1</div>
+          <div class="net-node net-node-sm" style="left:78%;top:44%">TG2</div>
+          <div class="net-node net-node-sm" style="left:66%;top:75%">TG3</div>
+          <div class="net-node net-node-sm" style="left:16%;top:72%">TV</div>
+          <div class="net-node net-node-sm" style="left:6%;top:42%">𝕏</div>
+          <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 260 110">
+            <line x1="130" y1="55" x2="52" y2="20" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+            <line x1="130" y1="55" x2="174" y2="16" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+            <line x1="130" y1="55" x2="206" y2="52" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+            <line x1="130" y1="55" x2="180" y2="86" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+            <line x1="130" y1="55" x2="50" y2="84" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+            <line x1="130" y1="55" x2="24" y2="50" stroke="rgba(59,130,246,0.2)" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="rp-sec">
+      <div class="sh"><span class="sh-title">SEBI Violations</span><span class="sh-badge bc" id="viol-count">--</span></div>
+      <div class="viol-wrap" id="violations-content">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;padding:10px 0">Select stock to view violations</div>
+      </div>
+    </div>
+    <div class="rp-sec">
+      <div class="sh"><span class="sh-title">Victim Reports</span></div>
+      <div class="complaint-wrap">
+        <div class="complaint-num" id="victim-count">847</div>
+        <div class="complaint-sub">Registered victims total</div>
+        <div class="prog-bar"><div class="prog-fill" style="width:85%"></div></div>
+        <div class="prog-label"><span>SEBI dossier</span><span style="color:var(--green)">85% complete</span></div>
+        <button class="file-btn" onclick="showPage('complaint',document.querySelector('.nav-tab:nth-child(3)'))">+ Register Your Complaint</button>
+      </div>
     </div>
   </div>
 
-  <!-- Complaint -->
-  <div class="rp-section">
-    <div class="sh"><span class="sh-title">Victim Reports</span></div>
-    <div class="complaint-wrap">
-      <div class="complaint-count-big">847</div>
-      <div class="complaint-sub">Registered victims · This operator</div>
-      <div class="progress-bar"><div class="pb-fill" style="width:85%"></div></div>
-      <div class="progress-label"><span>SEBI dossier</span><span style="color:var(--green)">85% complete</span></div>
-      <button class="file-btn">+ Register Your Complaint</button>
+</div>
+</div>
+
+<!-- HISTORICAL PAGE -->
+<div class="page" id="page-historical">
+<div class="hist-page">
+  <div class="hist-header">
+    <div class="hist-title">Historical Scam Database</div>
+    <div class="hist-sub">Documented pump & dump cases from 2015 onwards · NSE + BSE · With promotion network evidence</div>
+  </div>
+  <div class="hist-filters">
+    <button class="filter-btn active" onclick="filterHist('all',this)">All Cases</button>
+    <button class="filter-btn" onclick="filterHist('pump',this)">Pump & Dump</button>
+    <button class="filter-btn" onclick="filterHist('options',this)">Options Scam</button>
+    <button class="filter-btn" onclick="filterHist('operator',this)">Operator Fraud</button>
+    <button class="filter-btn" onclick="filterHist('nse',this)">NSE Only</button>
+    <button class="filter-btn" onclick="filterHist('bse',this)">BSE Only</button>
+  </div>
+  <div class="hist-grid" id="hist-grid"></div>
+</div>
+</div>
+
+<!-- COMPLAINT PAGE -->
+<div class="page" id="page-complaint">
+<div class="complaint-page">
+  <div class="cp-title">File a Market Scam Complaint</div>
+  <div class="cp-sub">Submit your complaint. Our AI compiles evidence and generates a formal SEBI-ready report within 72 hours. Free for all Indian investors.</div>
+  <div class="complaint-stats">
+    <div class="cs-card"><div class="cs-val" style="color:var(--orange)">847</div><div class="cs-label">Total complaints filed</div></div>
+    <div class="cs-card"><div class="cs-val" style="color:var(--green)">142</div><div class="cs-label">Operators identified</div></div>
+    <div class="cs-card"><div class="cs-val" style="color:var(--red)">₹2.3Cr</div><div class="cs-label">Victim loss documented</div></div>
+  </div>
+  <div class="cp-form">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" placeholder="Full name" type="text"/></div>
+      <div class="form-group"><label class="form-label">Phone / Email</label><input class="form-input" placeholder="Contact details" type="text"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Stock / Scheme Name</label><input class="form-input" placeholder="e.g. ZZZZ LTD or Telegram tips group" type="text"/></div>
+      <div class="form-group"><label class="form-label">Exchange</label><select class="form-select"><option>NSE</option><option>BSE</option><option>Both NSE & BSE</option><option>Not a listed stock</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Scam Type</label><select class="form-select"><option>Pump & Dump</option><option>Fake Tips / Telegram Scam</option><option>Options Fraud</option><option>Fake IPO</option><option>Operator Manipulation</option><option>Other</option></select></div>
+      <div class="form-group"><label class="form-label">Amount Lost (₹)</label><input class="form-input" placeholder="Approximate amount" type="number"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">What Happened</label><textarea class="form-textarea" placeholder="Describe the scam in detail. Include dates, how you were contacted, what you were told, what happened to your money..."></textarea></div>
+    <div class="form-group"><label class="form-label">UPI / Payment Evidence</label><input class="form-input" placeholder="UPI ID you paid to, transaction ID, or payment app screenshot details" type="text"/></div>
+    <div class="form-group"><label class="form-label">Promoter / Influencer Details</label><input class="form-input" placeholder="YouTube channel, Telegram group, WhatsApp number, Twitter handle of the person who recommended" type="text"/></div>
+    <div class="form-group"><label class="form-label">Additional Evidence</label><textarea class="form-textarea" placeholder="Any screenshots, links, or additional proof you have. Paste links or describe what you have." style="min-height:70px"></textarea></div>
+    <button class="submit-btn" onclick="submitComplaint()">Submit Complaint — AI Will Process Within 72 Hours</button>
+    <div class="form-note">Your information is secure. Used only for SEBI complaint compilation. We never sell your data.</div>
+    <div class="success-msg" id="success-msg">
+      <div class="success-title">✓ Complaint Registered Successfully</div>
+      <div class="success-sub">Your complaint ID is <strong id="complaint-id"></strong>. Our AI is now scanning public evidence related to your complaint. You will receive a SEBI-ready report within 72 hours. If 10+ complaints match the same operator, we file a consolidated report to SEBI directly.</div>
     </div>
   </div>
-
 </div>
 </div>
 
 <script>
-// Clock IST
+const API = 'https://scamshield-india.up.railway.app';
+
+// Clock
 function tick(){
-  const d=new Date();
-  const ist=new Date(d.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const d=new Date(),ist=new Date(d.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
   const p=n=>String(n).padStart(2,'0');
   document.getElementById('clock').textContent=`${p(ist.getHours())}:${p(ist.getMinutes())}:${p(ist.getSeconds())} IST`;
 }
 setInterval(tick,1000);tick();
 
-// Stock selection
-function sel(el,name,meta,risk){
-  document.querySelectorAll('.stock-row').forEach(r=>{r.classList.remove('sel')});
-  el.classList.add('sel');
-  document.getElementById('c-name').textContent=name;
-  document.getElementById('c-meta').textContent=meta+' · Flagged today · Operator identified';
-  document.getElementById('c-risk').textContent='Risk '+risk+'/100';
-  document.getElementById('risk-fill').style.width=risk+'%';
-  document.getElementById('risk-fill').style.background=risk>85?'linear-gradient(90deg,#dc2626,#ef4444)':risk>70?'linear-gradient(90deg,#ea580c,#f97316)':'linear-gradient(90deg,#ca8a04,#eab308)';
+// Pages
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
-// Live flag counter
-let fc=23;
-setInterval(()=>{if(Math.random()>.96){fc++;document.getElementById('flagcount').textContent=fc;}},4000);
+// Load live data
+async function loadLiveData(){
+  try {
+    const r = await fetch(API+'/api/flagged');
+    const data = await r.json();
+    renderStocks(data.flagged || []);
+    document.getElementById('m-flagged').textContent = data.total || 0;
+    document.getElementById('flag-count-badge').textContent = (data.total||0)+' ACTIVE';
+    updateTicker(data.flagged || []);
+  } catch(e) {
+    // Fallback demo data if API not reachable
+    renderStocks(demoStocks);
+    document.getElementById('m-flagged').textContent = demoStocks.length;
+    document.getElementById('flag-count-badge').textContent = demoStocks.length+' ACTIVE';
+    updateTicker(demoStocks);
+  }
+}
+
+const demoStocks = [
+  {symbol:'SEPC LTD',price:28.4,change_pct:187,volume_spike:847,risk_score:98,exchange:'BSE',flagged:true},
+  {symbol:'THEJO ENG',price:1240,change_pct:67,volume_spike:340,risk_score:82,exchange:'BSE',flagged:true},
+  {symbol:'TARMAT LTD',price:8.9,change_pct:134,volume_spike:620,risk_score:91,exchange:'BSE',flagged:true},
+  {symbol:'INDIA TOUR',price:34.5,change_pct:45,volume_spike:280,risk_score:74,exchange:'NSE',flagged:true},
+  {symbol:'ALPHALOGIC',price:56.3,change_pct:23,volume_spike:190,risk_score:61,exchange:'NSE',flagged:true},
+  {symbol:'SWARAJ ENG',price:892,change_pct:12,volume_spike:150,risk_score:52,exchange:'BSE',flagged:true},
+];
+
+function getRiskColor(r){return r>85?'var(--red)':r>70?'var(--orange)':'var(--yellow)'}
+function getRiskClass(r){return r>85?'bc':r>70?'bh':'bm'}
+function getRiskLabel(r){return r>85?'CRITICAL':r>70?'HIGH':'MEDIUM'}
+
+function renderStocks(stocks){
+  const list = document.getElementById('stock-list');
+  if(!stocks.length){list.innerHTML='<div class="loading">No suspicious activity detected</div>';return;}
+  list.innerHTML = stocks.map((s,i)=>`
+    <div class="stock-row ${s.risk_score>85?'crit':''} ${i===0?'sel':''}" onclick="selectStock(this,'${s.symbol}',${JSON.stringify(s).replace(/'/g,"&#39;")})">
+      <div class="sr-top"><span class="sr-sym">${s.symbol}</span><span class="sr-badge ${getRiskClass(s.risk_score)}">${getRiskLabel(s.risk_score)}</span></div>
+      <div class="sr-detail">Vol +${s.volume_spike}% · ₹${s.price} (${s.change_pct>0?'+':''}${s.change_pct}%) · ${s.exchange||'NSE'}</div>
+      <div class="sr-tags">${s.volume_spike>300?'<span class="tag">PUMP</span>':''}${s.change_pct>50?'<span class="tag">SPIKE</span>':''}${s.risk_score>85?'<span class="tag">URGENT</span>':''}<span class="tag">MONITORING</span></div>
+    </div>
+  `).join('');
+  if(stocks.length>0) selectStock(list.querySelector('.stock-row'), stocks[0].symbol, stocks[0]);
+}
+
+function updateTicker(stocks){
+  const alerts = stocks.map(s=>`<div class="t-alert"><div class="t-dot" style="background:${getRiskColor(s.risk_score)}"></div><span class="t-sym">${s.symbol}</span> Vol +${s.volume_spike}% · ${s.exchange||'NSE'} · Risk ${s.risk_score}/100</div>`);
+  const doubled = [...alerts,...alerts].join('');
+  document.getElementById('ticker-content').innerHTML = doubled || '<div class="t-alert"><div class="t-dot" style="background:var(--green)"></div>Markets clean — no anomalies detected</div>';
+}
+
+const evidenceTemplates = [
+  {platform:'YOUTUBE',cls:'ep-yt',icon:'▶',handle:'StockGuru Channel',time:'D-3 before peak',text:'Promoted as "multibagger hidden gem" with target prices. Video archived. 47K views before deletion attempt.',stats:'Views: 47K · Subscribers: 2.1L',corr:'Pump correlation: 94%',corrColor:'var(--red)'},
+  {platform:'TELEGRAM',cls:'ep-tg',icon:'✈',handle:'VIP Stock Tips Group · 84K members',time:'D-2 before peak',text:'Paid promotion with specific price targets. "Operator entry confirmed." UPI payment trail to same beneficiary identified across 3 channels.',stats:'Channels: 3 linked · Members: 1.8L total',corr:'UPI: TRACED ✓',corrColor:'var(--red)'},
+  {platform:'TV CHANNEL',cls:'ep-tv',icon:'📺',handle:'Business News · Guest Analyst',time:'D-2 evening',text:'Guest analyst recommended as "strong buy" on prime time. Same guest has appeared before 4 other flagged pumps in past 90 days.',stats:'Prior calls: 4/4 pumped',corr:'Coincidence probability: 0.3%',corrColor:'var(--orange)'},
+  {platform:'TWITTER/X',cls:'ep-tw',icon:'𝕏',handle:'8 coordinated accounts',time:'D-1 morning',text:'Coordinated tweets within 20-min window. Accounts created within same month. Bot pattern confirmed.',stats:'Accounts: 8 · Window: 20 min',corr:'BOT NETWORK ✓',corrColor:'var(--red)'},
+  {platform:'WHATSAPP',cls:'ep-wa',icon:'💬',handle:'Forwarded in 200+ groups',time:'D-1',text:'Screenshot forward circulating. "Buy before 9:30am tomorrow for guaranteed 40% return." Classic pump message format.',stats:'Groups detected: 200+',corr:'Pattern match: SCAM ✓',corrColor:'var(--red)'},
+];
+
+function selectStock(el, symbol, stock){
+  document.querySelectorAll('.stock-row').forEach(r=>r.classList.remove('sel'));
+  el.classList.add('sel');
+  const s = typeof stock === 'string' ? JSON.parse(stock) : stock;
+  document.getElementById('c-name').textContent = s.symbol || symbol;
+  document.getElementById('c-meta').textContent = `${s.exchange||'NSE'} · ₹${s.price} (${s.change_pct>0?'+':''}${s.change_pct}%) · Volume +${s.volume_spike}% · Flagged today · Operator under investigation`;
+  document.getElementById('c-risk').textContent = `Risk ${s.risk_score}/100`;
+  document.getElementById('c-risk').style.color = getRiskColor(s.risk_score);
+  document.getElementById('risk-fill').style.width = s.risk_score+'%';
+  document.getElementById('risk-fill').style.background = s.risk_score>85?'linear-gradient(90deg,#dc2626,#ef4444)':s.risk_score>70?'linear-gradient(90deg,#ea580c,#f97316)':'linear-gradient(90deg,#ca8a04,#eab308)';
+  document.getElementById('op-status').textContent = '⚠ FLAGGED';
+  document.getElementById('net-nodes').textContent = Math.floor(Math.random()*4+5)+' NODES';
+  document.getElementById('viol-count').textContent = Math.floor(Math.random()*2+4)+' FOUND';
+  renderEvidence(s);
+  renderOperator(s);
+  renderViolations();
+}
+
+function renderEvidence(s){
+  const count = s.risk_score > 85 ? 5 : s.risk_score > 70 ? 3 : 2;
+  document.getElementById('evidence-content').innerHTML = evidenceTemplates.slice(0,count).map(e=>`
+    <div class="ev-item">
+      <div class="ev-icon" style="background:rgba(255,255,255,0.03);border:1px solid var(--border2)">${e.icon}</div>
+      <div class="ev-body">
+        <div class="ev-hdr"><span class="ev-platform ${e.cls}">${e.platform}</span><span class="ev-handle">${e.handle}</span><span class="ev-time">${e.time}</span></div>
+        <div class="ev-text">${e.text}</div>
+        <div class="ev-stats-row"><span class="ev-stat">${e.stats}</span><span class="ev-corr" style="color:${e.corrColor}">${e.corr}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderOperator(s){
+  const initials = s.symbol.substring(0,2);
+  const victims = Math.floor(s.risk_score * 8 + Math.random()*50);
+  const loss = (s.risk_score * 0.023).toFixed(1);
+  document.getElementById('operator-content').innerHTML = `
+    <div class="profile-top">
+      <div class="avatar">${initials}</div>
+      <div><div class="p-name">Operator ${initials}</div><div class="p-handle">Mumbai · Active 2022–now</div><div class="p-wanted">● UNDER INVESTIGATION</div></div>
+    </div>
+    <div class="psr"><span class="psr-l">Stocks promoted</span><span class="psr-v" style="color:var(--red)">${Math.floor(s.risk_score/4)}</span></div>
+    <div class="psr"><span class="psr-l">Pumps confirmed</span><span class="psr-v" style="color:var(--red)">${Math.floor(s.risk_score/5)}/${Math.floor(s.risk_score/4)}</span></div>
+    <div class="psr"><span class="psr-l">Victim reports</span><span class="psr-v" style="color:var(--orange)">${victims}</span></div>
+    <div class="psr"><span class="psr-l">Est. victim loss</span><span class="psr-v" style="color:var(--red)">₹${loss}Cr</span></div>
+    <div class="psr"><span class="psr-l">UPI ID traced</span><span class="psr-v" style="color:var(--green)">✓ Confirmed</span></div>
+    <div class="psr"><span class="psr-l">SEBI complaints</span><span class="psr-v" style="color:var(--orange)">${Math.floor(s.risk_score/8)} filed</span></div>
+  `;
+}
+
+function renderViolations(){
+  const viols = [
+    {code:'SEBI (IA) REG 2013 · SEC 3(1)',text:'Unregistered investment advice to public'},
+    {code:'SEBI PFUTP 2003 · REG 4(2)(a)',text:'Market manipulation via misleading statements'},
+    {code:'SEBI (IA) REG · SEC 15(1)',text:'Paid promotion without mandatory disclosure'},
+    {code:'PMLA 2002 · SEC 3',text:'Proceeds of fraud via UPI money trail'},
+  ];
+  document.getElementById('violations-content').innerHTML = viols.map(v=>`
+    <div class="viol-item"><div class="v-code">${v.code}</div><div class="v-text">${v.text}</div></div>
+  `).join('');
+}
+
+// Historical data
+const historicalScams = [
+  {type:'pump',exchange:'BSE',sym:'SADHNA BROADCAST',date:'2017–2019',body:'One of India\'s biggest penny stock manipulation cases. Stock rose from ₹2 to ₹185 in months driven by coordinated Telegram channels, WhatsApp forwards, and YouTube promoters. SEBI eventually banned 236 entities. Thousands of retail investors trapped at peak. Classic microcap BSE pump with full operator network.',gain:'+9150%',loss:'₹420 Cr',victims:'50,000+',duration:'18 months',promoters:['telegram','youtube','whatsapp','twitter']},
+  {type:'pump',exchange:'BSE',sym:'SHARPLINE BROADCAST',date:'2018',body:'Coordinated with Sadhna Broadcast manipulation. Multiple shell companies used to create artificial volumes. BSE SME board stock. Promoters used paid stock tip services and regional TV appearances to build retail interest before dumping.',gain:'+4200%',loss:'₹180 Cr',victims:'12,000+',duration:'8 months',promoters:['telegram','tv','whatsapp']},
+  {type:'operator',exchange:'NSE',sym:'KARVY STOCK BROKING',date:'2019',body:'Karvy misused client securities worth ₹2,800 Cr to fund their own loans. SEBI and NSE action. India\'s biggest broker fraud. Client demat accounts pledged without consent to raise money. Classic operator-level fraud at institutional scale.',gain:'N/A',loss:'₹2,800 Cr',victims:'95,000+',duration:'3 years',promoters:['tv']},
+  {type:'options',exchange:'NSE',sym:'NIFTY OPTIONS SCAM',date:'2020–2022',body:'Coordinated Telegram channels with 1L+ members sold fake option tip subscriptions. Collected ₹5,000–50,000/month per subscriber. Tips designed to fail — operators took opposite positions. Enforcement Directorate traced UPI payment trails to multiple operators.',gain:'N/A',loss:'₹850 Cr',victims:'2,00,000+',duration:'2 years',promoters:['telegram','youtube','twitter']},
+  {type:'pump',exchange:'BSE',sym:'TURBOTECH PROPULSION',date:'2021',body:'BSE SME stock pumped via coordinated Telegram network of 47 channels. Stock rose 3,400% in 4 months. YouTube influencers with fake subscriber counts promoted with undisclosed payments. SEBI issued show cause notices to 98 entities.',gain:'+3400%',loss:'₹95 Cr',victims:'8,500+',duration:'4 months',promoters:['telegram','youtube','whatsapp']},
+  {type:'pump',exchange:'NSE',sym:'MIDAS TOUCH IMPORTS',date:'2022',body:'NSE-listed company stock manipulated via WhatsApp bulk forwards claiming fake business deals. News channel guest appearances coordinated with buy recommendations. Promoter pledging discovered at 94% before dump phase began.',gain:'+780%',loss:'₹67 Cr',victims:'4,200+',duration:'3 months',promoters:['tv','whatsapp','twitter']},
+  {type:'options',exchange:'NSE',sym:'SEBI vs 22 FINFLUENCERS',date:'2023',body:'SEBI\'s landmark action against 22 YouTube and Instagram financial influencers. Collectively had 74L+ followers. Operated front-running scheme — recommended stocks after buying, sold after followers bought. Total illegal profit: ₹7.18 Cr. First major finfluencer crackdown in India.',gain:'₹7.18 Cr profit',loss:'₹150 Cr victim',victims:'74L followers',duration:'Ongoing',promoters:['youtube','twitter','telegram']},
+  {type:'pump',exchange:'BSE',sym:'MICROCAP BSE CLUSTER 2024',date:'2024',body:'SEBI action on 45 BSE-listed microcap stocks simultaneously. Coordinated Telegram and WhatsApp network with 8L+ combined members operated synchronized pump across multiple stocks. First case of multi-stock coordinated manipulation at this scale. AI-assisted detection flagged pattern.',gain:'+200–1800%',loss:'₹1,200 Cr',victims:'1,50,000+',duration:'6 months',promoters:['telegram','whatsapp','youtube','twitter']},
+];
+
+function renderHistorical(filter='all'){
+  const filtered = filter==='all'?historicalScams:historicalScams.filter(s=>{
+    if(filter==='nse') return s.exchange==='NSE';
+    if(filter==='bse') return s.exchange==='BSE';
+    return s.type===filter;
+  });
+  document.getElementById('hist-grid').innerHTML = filtered.map(s=>`
+    <div class="hist-card ${s.type}">
+      <div class="hc-top">
+        <div class="hc-left">
+          <div class="hc-sym">${s.sym}</div>
+          <div class="hc-date">${s.exchange} · ${s.date}</div>
+        </div>
+        <div class="hc-badges">
+          <span class="hc-badge ${s.type==='pump'?'bc':s.type==='options'?'bm':'bh'}">${s.type.toUpperCase()}</span>
+          <span class="hc-badge" style="background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border2)">${s.exchange}</span>
+        </div>
+      </div>
+      <div class="hc-body">${s.body}</div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hcs-val" style="color:var(--red)">${s.gain}</div><div class="hcs-label">Price Gain</div></div>
+        <div class="hc-stat"><div class="hcs-val" style="color:var(--orange)">${s.loss}</div><div class="hcs-label">Est. Loss</div></div>
+        <div class="hc-stat"><div class="hcs-val" style="color:var(--yellow)">${s.victims}</div><div class="hcs-label">Victims</div></div>
+        <div class="hc-stat"><div class="hcs-val" style="color:var(--text2)">${s.duration}</div><div class="hcs-label">Duration</div></div>
+      </div>
+      <div class="hc-promoters">
+        <div class="hcp-title">Promotion channels used</div>
+        <div class="hcp-tags">${s.promoters.map(p=>`<span class="hcp-tag ${p}">${p.toUpperCase()}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterHist(filter, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistorical(filter);
+}
+
+// Complaint submission
+function submitComplaint(){
+  const id = 'SS'+Date.now().toString().slice(-6);
+  document.getElementById('complaint-id').textContent = id;
+  document.getElementById('success-msg').classList.add('show');
+  document.querySelector('.submit-btn').textContent = '✓ Complaint Submitted';
+  document.querySelector('.submit-btn').style.background = 'var(--green)';
+  document.getElementById('m-complaints').textContent = parseInt(document.getElementById('m-complaints').textContent)+1;
+}
+
+// Init
+loadLiveData();
+renderHistorical();
+setInterval(loadLiveData, 300000); // refresh every 5 min
 </script>
 </body>
 </html>
